@@ -5,6 +5,7 @@
     :icon="tenant ? tenant.icon : ''"
     :config="config"
     :complexity="tenant ? tenant.password_complexity : undefined"
+    @refresh="refresh"
   />
 </template>
 <script lang="ts">
@@ -102,6 +103,20 @@ export default class Login extends Vue {
       return extend
     } else {
       return null
+    }
+  }
+
+  refresh(config: LoginPagesConfig) {
+    for (const p in this.config) {
+      const c = config[p]
+      if (c) {
+        const forms = c.forms
+        if (forms) {
+          for (const i in forms) {
+            this.$set(this.config[p].forms!, i, forms[i])
+          }
+        }
+      }
     }
   }
 }

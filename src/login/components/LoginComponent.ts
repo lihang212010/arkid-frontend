@@ -296,10 +296,10 @@ export default class LoginComponent extends Vue {
         }
       }
     } else {
-      if (data.is_need_refresh && LoginStore.CodeFileName === '') {
-        window.location.reload()
-      } else if (data.error === '10029') {
+      if (data.error === '10029') {
         this.switchPage('password')
+      } else if (data.data) {
+        this.refresh(data.data)
       }
       this.$message({
         message: error[data.error] || data.message || 'error',
@@ -307,6 +307,10 @@ export default class LoginComponent extends Vue {
         showClose: true
       })
     }
+  }
+
+  refresh(data: LoginPagesConfig) {
+    this.$emit('refresh', data)
   }
 
 }

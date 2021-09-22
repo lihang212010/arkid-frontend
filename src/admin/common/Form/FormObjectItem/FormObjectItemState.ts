@@ -53,7 +53,7 @@ export default class FormObjectItemState implements FormState {
         if (item.type === 'FormObjectItem') {
           this.setValue(v, item.state.items)
         } else {
-          item.state.value = isBoolean(item.state.value) ? Boolean(v) : v
+          item.state.value = isBoolean(item.state.value) ? Boolean(v) : v || item.state.value
         }
       }
     }
