@@ -4,14 +4,21 @@ import { getSlug, getUrlParamByName } from '@/utils/url'
 import getBaseUrl from '@/utils/get-base-url'
 import { processUUId } from '@/utils/common'
 import { ConfigModule } from '@/store/modules/config'
+import OpenAPI from '@/config/openapi'
 
 export class TenantNode extends APINode {
   async run() {
+    
     this.url = '/api/v1/tenant_switchinfo/'
-    this.method = 'GET'
-    const data = await super.run()
-    const { platform_tenant_uuid: uuid, switch: tenantSwitch } = data
-    TenantModule.setTenantSwitch(tenantSwitch)
+    this.method = 'get'
+    let uuid: string = '', tenantSwitch: boolean = false
+    if (OpenAPI.instance.getOperation(this.url, this.method)) {
+      const data = await super.run()
+      uuid = data.platform_tenant_uuid
+      tenantSwitch = data.switch
+      TenantModule.setTenantSwitch(tenantSwitch)
+    }
+
     const slug = getSlug()
     if (slug === '') {
       TenantModule.changeCurrentTenant({ uuid })
