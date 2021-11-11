@@ -53,9 +53,11 @@ export default class extends Vue {
     this.isShow = true
     const tenantUUId = TenantModule.currentTenant.uuid
     if (tenantUUId) this.isShowClose = true
+    const state = Object.create({ _page_: this.page })
     await runFlowByFile('flows/initPage', {
-      page: this.page
-    }).then(async(state) => {
+      page: this.page,
+      state
+    }).then(_ => {
       TenantModule.changeState(state)
       this.initCompleted = true
     })

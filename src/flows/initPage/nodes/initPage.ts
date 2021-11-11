@@ -10,7 +10,7 @@ const EXPAND_TABLE_PAGE = [ 'contacts_user' ]
 
 const READONLY_PAGE = [ 'profile', 'tenant_config' ]
 
-const TABS_PAGE = [ 'profile', 'third_part_account', 'subuser', 'user_token_manage', 'login_register_extension_config', 'tenant_register_privacy_notice', 'login_register_config' ]
+const TABS_PAGE = [ 'profile', 'login_register_config' ]
 
 const PAGE_BASE_FLOW = {
   'table_page': 'flows/page/base',
@@ -52,14 +52,12 @@ export interface BasePageOptions {
   showReadOnly?: boolean
   showWriteOnly?: boolean
   tableIsExpand?: boolean
-  isTabPage?: boolean
 }
 
 export class InitPage extends FunctionNode {
 
   async run() {
     let { page, state } = this.inputs
-    if (!state) { state = {} }
     if (typeof page === 'string') {
       await this.toPerformPageFlow(page, state)
     } else {
@@ -67,7 +65,6 @@ export class InitPage extends FunctionNode {
         await this.toPerformPageFlow(i, state)
       }
     }
-    return state
   }
 
   async toPerformPageFlow(page: string, state: any) {
@@ -87,7 +84,7 @@ export class InitPage extends FunctionNode {
       } else if (DASHBOARD_PAGE_FLOW[page]) {
         await runFlowByFile(DASHBOARD_PAGE_FLOW[page], { state, dep, page, options })
       }
-      if (options.isTabPage) {
+      if (page.indexOf('.') === -1) {
         this.initPageTabs(state, page, description)
       }
     }
@@ -105,22 +102,29 @@ export class InitPage extends FunctionNode {
     options.disabled = DISABLED_PAGE.includes(page)
     options.readonly = READONLY_PAGE.includes(page)
     options.tableIsExpand = EXPAND_TABLE_PAGE.includes(page)
-    options.isTabPage = TABS_PAGE.includes(page)
     return options
   }
 
   initPageTabs(state: any, page: string, description: string = '') {
-    if (!state.$tabs) {
-      state.$tabs = {
-        value: page,
-        tabPosition: 'left',
-        stretch: true,
-        items: []
+    const pages = state._page_
+    if (typeof pages !== 'string') {
+      for (let i = 0, len = pages.length; i < len; i++) {
+        if (TABS_PAGE.indexOf(pages[i]) !== -1) {   
+          if (!state.$tabs) {
+            state.$tabs = {
+              value: page,
+              tabPosition: 'left',
+              stretch: true,
+              items: []
+            }
+          }
+          state.$tabs.items.push({
+            name: page,
+            label: description,
+          })
+          break
+        }
       }
     }
-    state.$tabs.items.push({
-      name: page,
-      label: description,
-    })
   }
 }
