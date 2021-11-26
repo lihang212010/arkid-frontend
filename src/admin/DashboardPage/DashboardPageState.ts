@@ -20,3 +20,9 @@ export interface DashboardPage extends BaseState {
   action?: string | Function // ... operation ...
   data?: any
 }
+
+export const useDashboardPage = (): DashboardPage => {
+  return {
+
+  }
+}

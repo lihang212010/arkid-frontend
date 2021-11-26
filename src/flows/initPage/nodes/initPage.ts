@@ -18,6 +18,8 @@ const PAGE_BASE_FLOW = {
   'tree_page': 'flows/page/base'
 }
 
+const PAGE_MAIN_FLOW = 'flows/page/base'
+
 const DASHBOARD_PAGE_FLOW = {
   'desktop': 'flows/page/dashboard/desktop',
   'notice': 'flows/page/dashboard/desktop',
@@ -59,40 +61,24 @@ export class InitPage extends FunctionNode {
   async run() {
     const state = this.inputs.state
     for (const page of state._pages_) {
-      if (state[page]) {
-        continue
-      }
-      await this.toPerformPageFlow(page, state)
+      if (state[page]) continue
+      await this.runPageMainFlow(page, state)
+      await this.runPageCustomFlow(page, state)
     }
   }
 
-  async toPerformPageFlow(page: string, state: any) {
-    await this.toPerformPageBaseFlow(page, state)
-    await this.toPerformPageCustomFlow(page, state)
-  }
-
-  async toPerformPageBaseFlow(page: string, state: any) {
+  async runPageMainFlow(page: string, state: any) {
     const tag = OpenAPI.instance.getOnePageTag(page)
     if (tag) {
-      // dep 代表当前生成page所指页面的’依赖‘，来自OpenAPI描述信息
       const { page: dep, description } = tag
-      const pageType = dep?.type
-      const options = this.initPageOptions(page, { description })
-      if (pageType && PAGE_BASE_FLOW[pageType]) {
-        await runFlowByFile(PAGE_BASE_FLOW[pageType], { state, dep, page, options })
-      } else if (DASHBOARD_PAGE_FLOW[page]) {
-        await runFlowByFile(DASHBOARD_PAGE_FLOW[page], { state, dep, page, options })
-      }
-      if (options.isTabPage) {
-        this.initPageTabs(state, page, description)
-      }
+      await runFlowByFile(PAGE_MAIN_FLOW, { state, dep, description, page })
     }
   }
 
-  async toPerformPageCustomFlow(page: string, state: any) {
+  async runPageCustomFlow(page: string, state: any) {
     const customFlow = PAGE_CUSTOM_FLOW[page]
     if (customFlow) {
-      await runFlowByFile(customFlow, { page, state })
+      // await runFlowByFile(customFlow, { state, page })
     }
   }
 
@@ -103,20 +89,5 @@ export class InitPage extends FunctionNode {
     options.tableIsExpand = EXPAND_TABLE_PAGE.includes(page)
     options.isTabPage = TABS_PAGE.includes(page)
     return options
-  }
-
-  initPageTabs(state: any, page: string, description: string = '') {
-    if (!state.$tabs) {
-      state.$tabs = {
-        value: page,
-        tabPosition: 'left',
-        stretch: true,
-        items: []
-      }
-    }
-    state.$tabs.items.push({
-      name: page,
-      label: description,
-    })
   }
 }

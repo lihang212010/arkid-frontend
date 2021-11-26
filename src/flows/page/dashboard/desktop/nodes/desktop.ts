@@ -1,7 +1,7 @@
 import { FunctionNode } from 'arkfbp/lib/functionNode'
 // import { getSchemaByPath } from '@/utils/schema'
 // import generateForm from '@/utils/form'
-import OpenAPI, { ITagPageAction } from '@/config/openapi'
+import OpenAPI, { IPageOperation } from '@/config/openapi'
 
 export class DesktopNode extends FunctionNode {
   async run() {
@@ -91,8 +91,8 @@ export class DesktopNode extends FunctionNode {
                       },
                       {
                         name: 'flows/custom/desktop/subscribe',
-                        url: (manageLocal as ITagPageAction).path,
-                        method: (manageLocal as ITagPageAction).method
+                        url: (manageLocal as IPageOperation).path,
+                        method: (manageLocal as IPageOperation).method
                       },
                       'desktop.fetch'
                     ]

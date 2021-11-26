@@ -68,42 +68,32 @@ export interface ITag {
   name: string
   description?: string
   externalDocs?: IExternalDocs
-  page?: ITagPage
+  page?: IPage
 }
 
-export interface ITagPage {
+export interface IPage extends IPageOperations {
   type: string
-  init: ITagPageAction
-  global?: ITagPageOperation
-  local?: ITagPageOperation | ITagPageAction
+  init: IPageOperation
 }
 
-export interface ITagPageAction {
-  path: string
-  method: string
+export interface IPageOperations {
+  local?: IPageOperation[] | IPageOperation
+  global?: IPageOperation[] | IPageOperation
+}
+
+export interface IPageOperation {
+  path?: string
+  method?: string
+  next?: string
+  write?: IPageOperation
+  read?: IPageOperation
+  tag?: string | string[]
   description?: string
   icon?: string
-  next?: string
+  type: IPageOperactionType
 }
 
-export interface ITagUpdateOperation {
-  write: ITagPageAction
-  read: ITagPageAction
-}
-
-export interface ITagPageMultiAction {
-  [key: string]: ITagPageAction
-}
-
-export interface ITagPageMapping {
-  tag: string
-  description: string
-  icon?: string
-}
-
-export interface ITagPageOperation {
-  [key: string]: ITagPageAction | ITagPageMapping | ITagPageMultiAction
-}
+export type IPageOperactionType = 'password' | 'import' | 'logout' | 'sort' | 'node' | undefined
 
 export interface IHeader extends IBaseSchema {
   type: string

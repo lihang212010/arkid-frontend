@@ -2,9 +2,9 @@ import { Flow } from 'arkfbp/lib/flow'
 import { Graph } from 'arkfbp/lib/graph'
 import { StartNode } from 'arkfbp/lib/startNode'
 import { StopNode } from 'arkfbp/lib/stopNode'
-import { PageNode } from './nodes/pageNode'
-import { StateNode } from './nodes/stateNode'
-import { ActionNode } from './nodes/actionNode'
+import { PageCreateNode } from './nodes/create'
+import { PageStateNode } from './nodes/state'
+import { PageActionNode } from './nodes/action'
 
 export class Main extends Flow {
   createNodes() {
@@ -12,18 +12,18 @@ export class Main extends Flow {
       {
         cls: StartNode,
         id: 'start',
-        next: 'pageNode'
+        next: 'page-create'
       }, {
-        cls: PageNode,
-        id: 'pageNode',
-        next: 'stateNode'
+        cls: PageCreateNode,
+        id: 'page-create',
+        next: 'page-state'
       }, {
-        cls: StateNode,
-        id: 'stateNode',
-        next: 'actionNode'
+        cls: PageStateNode,
+        id: 'page-state',
+        next: 'page-action'
       }, {
-        cls: ActionNode,
-        id: 'actionNode',
+        cls: PageActionNode,
+        id: 'page-action',
         next: 'stop'
       }, {
         cls: StopNode,

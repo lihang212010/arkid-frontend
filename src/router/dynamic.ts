@@ -1,6 +1,6 @@
 import { RouteConfig } from 'vue-router'
 import Layout from '@/layout/index.vue'
-import Admin from '@/admin/main/index.vue'
+import Admin from '@/admin/index.vue'
 import { UserModule, UserRole } from '@/store/modules/user'
 import OpenAPI, { ISpec, IOpenAPIRouter } from '@/config/openapi'
 import hasPermission from '@/utils/role'

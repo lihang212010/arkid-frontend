@@ -3,11 +3,11 @@ import CardState from '../common/Card/CardState'
 import TableState from '../common/data/Table/TableState'
 import FormState from '../common/Form/FormState'
 import PaginationState from '../common/data/Pagination/PaginationState'
-import DialogState from '@/admin/common/Dialog/DialogState'
-import ListState from '@/admin/common/List/ListState' 
-import { IFlow } from '@/arkfbp'
+import DialogState from '../common/Dialog/DialogState'
+import ListState from '../common/List/ListState' 
+import { IFlow } from '../../arkfbp'
 
-export interface TablePage extends BaseState {
+export interface TablePageState extends BaseState {
   filter?: FormState
   table?: TableState
   pagination?: PaginationState
@@ -16,4 +16,10 @@ export interface TablePage extends BaseState {
   dialogs?: { [name:string]: DialogState }
   list?: ListState
   actions?: { [name: string]: (IFlow | string)[] }
+}
+
+export const useTablePage = (): TablePageState => {
+  return {
+
+  }
 }

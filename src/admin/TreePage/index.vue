@@ -31,7 +31,7 @@ import Card from '@/admin/common/Card/index.vue'
 import Tree from '@/admin/common/data/Tree/index.vue'
 import Dialog from '@/admin/common/Dialog/index.vue'
 import TablePage from '@/admin/TablePage/index.vue'
-import { TreePage } from './TreePageState'
+import { TreePageState } from '.'
 import Pagination from '@/admin/common/data/Pagination/index.vue'
 import BaseVue from '@/admin/base/BaseVue'
 
@@ -46,8 +46,8 @@ import BaseVue from '@/admin/base/BaseVue'
   }
 })
 export default class extends Mixins(BaseVue) {
-  get state(): TreePage {
-    return this.$state as TreePage
+  get state(): TreePageState {
+    return this.$state as TreePageState
   }
 }
 </script>
