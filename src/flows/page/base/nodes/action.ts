@@ -1,5 +1,5 @@
 import { ActionNode } from '@/arkfbp/nodes/actionNode'
-import OpenAPI, { ISchema, IPage, IPageOperation } from '@/config/openapi'
+import OpenAPI, { ISchema, IPageAction, IPageActions } from '@/config/openapi'
 import { PAGE_TYPE, ACTION_TYPE } from '@/utils/constant'
 import { getContent } from '@/utils/schema'
 import { getActionMapping } from '@/utils/generate-action'
@@ -8,19 +8,14 @@ import { isArray } from 'lodash'
 export class PageActionNode extends ActionNode {
   
   async run() {
-    // init current status
-    await super.run()
-    // get dependent content in current page
-    const { _dep: dep, _temp: state, _type: type } = this
-    const { init, local, global } = dep
-    // add all type action
-    if (init) this.addInitAction(init, type)
-    if (local) this.processOtherAction(local, type, ACTION_TYPE.LOCAL)
-    if (global) this.processOtherAction(global, type, ACTION_TYPE.GLOBAL)
-    if (state.filter) this.addFilterAction()
+    const { pageInitAction, pageLocalActions, pageGlobalActions, pageType, pageState } = this
+    if (pageInitAction) this.addInitAction(pageInitAction, pageType)
+    if (pageLocalActions) this.processOtherAction(pageLocalActions, pageType, ACTION_TYPE.LOCAL)
+    if (pageGlobalActions) this.processOtherAction(pageGlobalActions, pageType, ACTION_TYPE.GLOBAL)
+    if (pageState.filter) this.addFilterAction()
   }
 
-  addInitAction(init: IPageOperation, pageType: string) {
+  addInitAction(init: IPageAction, pageType: string) {
     const { path, method, next } = init
     if (!path || !method) return
     switch (pageType) {
@@ -41,17 +36,14 @@ export class PageActionNode extends ActionNode {
     }
   }
 
-  processOtherAction(operation: IPageOperation[] | IPageOperation, pageType: string, actionType: string) {
-    if (isArray(operation)) {
-      for (const o of operation) {
-        this.addClickAction(o, pageType, actionType)
-      }
-    } else {
-      this.addClickAction(operation, pageType, actionType)
+  processOtherAction(action: IPageActions, pageType: string, actionType: string) {
+    const keys = Object.keys(action)
+    for (const key of keys) {
+      this.addClickAction(action[key], pageType, actionType)
     }
   }
 
-  addClickAction(operation: IPageOperation, pageType: string, actionType: string) {
+  addClickAction(action: IPageAction, pageType: string, actionType: string) {
 
   }
   

@@ -1,4 +1,5 @@
 import { FunctionNode } from 'arkfbp/lib/functionNode'
+import { AdminNode } from '@/arkfbp/nodes/adminNode'
 import { useTablePage } from '@/admin/TablePage'
 import { useFormPage } from '@/admin/FormPage'
 import { useTreePage } from '@/admin/TreePage'
@@ -29,17 +30,28 @@ const usePage = (type: string) => {
   }
 }
 
-export class PageCreateNode extends FunctionNode {
+export class PageCreateNode extends AdminNode {
   async run() {
-    const { state, dep, page } = this.inputs
+    const { state, dep, page, options } = this.inputs
+    const { init, local, global } = dep || {}
     let type = camelCase(dep.type)
     type = type.charAt(0).toUpperCase() + type.slice(1)
     const pageState = usePage(type)
-    if (pageState === null) return
-    state[page] = {
-      type,
-      state: pageState
+    if (pageState === null) {
+      return
+    } else {
+      state[page] = {
+        type,
+        state: pageState
+      }
+      this.adminState = state
+      this.pageState = state[page].state
+      this.pageType = type
+      this.pageName = page
+      this.pageInitAction = init
+      this.pageLocalActions = local
+      this.pageGlobalActions = global
+      this.pageOptions = options
     }
-    return this.inputs
   }
 }

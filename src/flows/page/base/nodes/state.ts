@@ -1,5 +1,5 @@
 import { StateNode } from '@/arkfbp/nodes/stateNode'
-import { ISchema, IPageOperation } from '@/config/openapi'
+import { ISchema, IPageAction, IPageActions } from '@/config/openapi'
 import TableColumnState from '@/admin/common/data/Table/TableColumn/TableColumnState'
 import { BasePageOptions } from '@/flows/initPage/nodes/initPage'
 import FormItemState from '@/admin/common/Form/FormItem/FormItemState'
@@ -16,7 +16,7 @@ enum ACTION_TYPE {
 }
 
 interface ButtonDep {
-  operation: IPageOperation
+  operation: IPageAction
   key: string
   actionName?: string
   actionType?: ACTION_TYPE
@@ -25,11 +25,21 @@ interface ButtonDep {
 export class PageStateNode extends StateNode {
 
   async run() {
-    // initial current page status
-    await super.run()
-
-    const state = this
-    debugger
+    const { pageInitAction, pageLocalActions, pageGlobalActions, pageType } = this
+    if (pageInitAction) this.addMainState(pageInitAction, pageType)
+    if (pageLocalActions) this.addLocalButtonsState()
+    if (pageGlobalActions) this.addGlobalButtonsState()
   }
 
+  addMainState(init: IPageAction, pageType: string) {
+    
+  }
+
+  addLocalButtonsState() {
+
+  }
+
+  addGlobalButtonsState() {
+
+  }
 }

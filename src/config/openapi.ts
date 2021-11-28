@@ -71,22 +71,23 @@ export interface ITag {
   page?: IPage
 }
 
-export interface IPage extends IPageOperations {
+export interface IPage {
   type: string
-  init: IPageOperation
+  init: IPageAction
+  local?: IPageActions
+  global?: IPageActions
 }
 
-export interface IPageOperations {
-  local?: IPageOperation[] | IPageOperation
-  global?: IPageOperation[] | IPageOperation
+export interface IPageActions {
+  [key: string]: IPageAction
 }
 
-export interface IPageOperation {
+export interface IPageAction {
   path?: string
   method?: string
   next?: string
-  write?: IPageOperation
-  read?: IPageOperation
+  write?: IPageAction
+  read?: IPageAction
   tag?: string | string[]
   description?: string
   icon?: string
