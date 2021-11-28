@@ -1,7 +1,7 @@
 <template>
   <div class="table-page">
     <Card
-      :path="getChildPath('card')"
+      :path="getChildPath('header')"
       :class="[{'table-list-page': !!state.list}]"
     >
       <Form

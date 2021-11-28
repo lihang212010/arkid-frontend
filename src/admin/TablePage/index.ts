@@ -12,7 +12,7 @@ export interface TablePageState extends BaseState {
   table?: TableState
   pagination?: PaginationState
   data?: any
-  card?: CardState
+  header?: CardState
   dialogs?: { [name:string]: DialogState }
   list?: ListState
   actions?: { [name: string]: (IFlow | string)[] }
@@ -20,6 +20,17 @@ export interface TablePageState extends BaseState {
 
 export const useTablePage = (): TablePageState => {
   return {
-
+    created: '',
+    header: {
+      title: '',
+      buttons: []
+    },
+    data: null,
+    table: {
+      columns: [],
+      data: []
+    },
+    dialogs: {},
+    actions: {}
   }
 }
