@@ -25,6 +25,7 @@ interface ButtonDep {
 export class PageStateNode extends StateNode {
 
   async run() {
+    await super.run()
     const { pageInitAction, pageLocalActions, pageGlobalActions, pageType } = this
     if (pageInitAction) this.addMainState(pageInitAction, pageType)
     if (pageLocalActions) this.addLocalButtonsState()
