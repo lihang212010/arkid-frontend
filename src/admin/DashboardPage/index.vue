@@ -8,21 +8,30 @@
         :path="getChildPath('filter')"
         class="dashboard-page-filter"
       />
-      <draggable
-        id="draggable-panel"
-        :class="[state.options && state.options.disabled ? 'no-drag-board' : 'drag-board']"
-        :list="state.items"
-        :options="state.options"
-        :style="{}"
-        @end="end"
+      <div
+        v-for="(group, index) in state.groups"
+        :key="index"
+        :class="`dashboard-panel-${index}`"
       >
-        <AdminComponent
-          v-for="(item, index) in state.items"
-          :key="index"
-          :path="getChildPath(`items[${index}]`)"
-          class="item"
-        />
-      </draggable>
+        <el-divider v-if="group.title">
+          {{ group.title }}
+        </el-divider>
+        <draggable
+          :class="[group.options && group.options.disabled ? 'no-drag-board' : 'drag-board']"
+          :list="group.items"
+          :options="group.options"
+          :groups="group.name"
+          :style="{}"
+          @end="end"
+        >
+          <AdminComponent
+            v-for="(item, itemIndex) in group.items"
+            :key="itemIndex"
+            :path="getChildPath(`groups[${index}].items[${itemIndex}]`)"
+            class="item"
+          />
+        </draggable>
+      </div>
       <template v-if="state.dialogs">
         <Dialog
           v-for="dialogName in Object.keys(state.dialogs)"

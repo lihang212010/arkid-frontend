@@ -67,7 +67,13 @@ export class Extension extends FunctionNode {
           title: options.description
         },
         filter: this.initFilter(init.path, init.method),
-        items: [],
+        groups: [
+          {
+            name: '',
+            items: [],
+            options: {}
+          }
+        ],
         dialogs: {},
         pagination: {
           total: 0,

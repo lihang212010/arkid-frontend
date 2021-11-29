@@ -9,9 +9,15 @@ export class Tenant extends FunctionNode {
       type: 'DashboardPage',
       state: {
         created: 'created',
-        options: {
-          disabled: true
-        },
+        groups: [
+          {
+            name: '',
+            items: [],
+            options: {
+              disabled: true
+            }
+          }
+        ],
         card: {
           title: options.description,
           buttons: [
@@ -36,7 +42,6 @@ export class Tenant extends FunctionNode {
           pageSize: 10,
           action: 'fetch'
         },
-        items: [],
         data: null,
         actions: {
           created: [ 'fetch' ],

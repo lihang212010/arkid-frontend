@@ -7,8 +7,13 @@ export class StatisticsNode extends FunctionNode {
     state[page] = {
       type: 'DashboardPage',
       state: {
-        items: [],
-        options: {},
+        groups: [
+          {
+            name: '',
+            items: [],
+            options: {}
+          }
+        ],
         actions: {}
       }
     }

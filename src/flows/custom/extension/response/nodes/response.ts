@@ -8,11 +8,11 @@ export class Response extends FunctionNode {
     if (results && results.length) {
       const client = state.inputs.client
       client.pagination.total = data.count 
-      const items = client.items
-      items.length = 0
+      const group = client.groups[0].items
+      group.length = 0
       for (let i = 0, len = results.length; i < len; i++) {
         const item = results[i]
-        items.push({
+        group.push({
           type: 'ExtensionPanel',
           state: {
             ...item,

@@ -2,36 +2,52 @@ import { FunctionNode } from 'arkfbp/lib/functionNode'
 import { getSchemaByPath } from '@/utils/schema'
 import generateForm from '@/utils/form'
 import OpenAPI, { ITagPageAction } from '@/config/openapi'
+import { IFlow } from '@/arkfbp'
+import { DashboardGroup } from '@/admin/DashboardPage/DashboardPageState'
 
 export class DesktopNode extends FunctionNode {
   async run() {
     const { state, page, dep, options } = this.inputs
-    let url, method, description
-    if (dep) {
-      const init = dep.init
-      url = init.path
-      method = init.method
-    }
-    if (options) {
-      description = options.description
-    }
+    const { init, global, local } = dep || {}
+    const description = options && options.description
+    if (!init) return
+    const { path, method, tag } = init
 
     if (page === 'desktop') {
+      let fetchAction: IFlow[] = []
+      let groups: DashboardGroup[] = []
+      if (tag) {
+        tag.forEach(t => {
+          const info = OpenAPI.instance.getOnePageTag(t)
+          if (info && info.page) {
+            const tInit = info.page.init
+            fetchAction.push({
+              name: 'flows/custom/desktop/fetch',
+              url: tInit.path, method: tInit.method,
+              response: info.name
+            })
+            groups.push({
+              name: info.name,
+              title: info.description,
+              items: []
+            })
+          }
+        })
+      } else if (path && method) {
+        fetchAction.push({
+          name: 'flows/custom/desktop/fetch',
+          url: path, method
+        })
+      }
       state[page] = {
         type: 'DashboardPage',
         state: {
           created: 'created',
-          items: [],
-          options: {},
+          groups,
           endAction: 'keepAppPosition',
           actions: {
             created: [ 'fetch' ],
-            fetch: [
-              {
-                name: 'flows/custom/desktop/fetch',
-                url, method
-              }
-            ],
+            fetch: fetchAction,
             keepAppPosition: [
               {
                 name: 'flows/custom/desktop/adjust'
@@ -45,8 +61,8 @@ export class DesktopNode extends FunctionNode {
           dialogs: {}
         }
       }
-      if (dep.global) {
-        const { tag: manageTag } = dep.global.manage
+      if (global) {
+        const { tag: manageTag } = global.manage
         if (manageTag) {
           const info = OpenAPI.instance.getOnePageTag(manageTag)
           if (info) {
@@ -123,8 +139,8 @@ export class DesktopNode extends FunctionNode {
       }
       const noticeLists = state.notice.state
       let items
-      if (url && method) {
-        const schema = getSchemaByPath(url, method)
+      if (path && method) {
+        const schema = getSchemaByPath(path, method)
         if (schema) {
           const { form } = generateForm(schema, false, true, false, true)
           items = form?.items
@@ -151,13 +167,13 @@ export class DesktopNode extends FunctionNode {
           fetch: [
             {
               name: 'flows/common/list',
-              url, method
+              url: path, method
             }
           ]
         }
       }
       const actions = noticeLists[page].actions
-      if (url && method) {
+      if (path && method) {
         actions.created.push('fetch')
       }
     }

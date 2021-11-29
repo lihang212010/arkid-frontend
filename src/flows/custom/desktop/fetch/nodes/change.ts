@@ -5,37 +5,55 @@ export class ChangeStateNode extends APINode {
 
   async run() {
     const { results, source } = this.inputs
-    const { client } = source
+    const { client, clientServer } = source
 
     // set app position
-    this.url = '/api/v1/user/appdata/'
-    this.method = 'GET'
-    const res = await super.run()
-    const data = res.data || []
+    // this.url = '/api/v1/user/appdata/'
+    // this.method = 'GET'
+    // const res = await super.run()
+    // const data = res.data || []
 
     // save for headers search function
     UserModule.setUserApps(results || [])
 
-    // set desktop apps panel -- cardpanel
-    if (results && results.length) {
-      const firstArr = new Array()
-      const secondArr = new Array()
-      results.forEach(app => {
-        const uuid = app.uuid
-        const index = data.indexOf(uuid)
-        if (index !== -1) {
-          firstArr[index] = {
-            type: 'CardPanel',
-            state: app
-          }
-        } else {
-          secondArr.push({
-            type: 'CardPanel',
-            state: app
+    const groups = client.groups
+
+    for (const group of groups) {
+      if (group.name === clientServer) {
+        group.items.length = 0
+        if (results && results.length > 0) {
+          results.forEach((item) => {
+            group.items.push({
+              type: 'CardPanel',
+              state: item
+            })
           })
+        } else {
+          group.title = ''
         }
-      })
-      client.items = firstArr.concat(secondArr)
+      }
     }
+
+    // set desktop apps panel -- cardpanel
+    // if (results && results.length) {
+    //   const firstArr = new Array()
+    //   const secondArr = new Array()
+    //   results.forEach(app => {
+    //     const uuid = app.uuid
+    //     const index = data.indexOf(uuid)
+    //     if (index !== -1) {
+    //       firstArr[index] = {
+    //         type: 'CardPanel',
+    //         state: app
+    //       }
+    //     } else {
+    //       secondArr.push({
+    //         type: 'CardPanel',
+    //         state: app
+    //       })
+    //     }
+    //   })
+    //   client.items = firstArr.concat(secondArr)
+    // }
   }
 }

@@ -11,7 +11,7 @@ export class TenantFetch extends APINode {
     if (outputs) {
       const { count, results } = outputs
       if (results && results.length) {
-        const list = client.items
+        const list = client.groups[0].items
         client.pagination.total = count
         list.length = 0
         for (const item of results) {
