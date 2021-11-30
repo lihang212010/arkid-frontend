@@ -62,7 +62,8 @@ export class DesktopNode extends FunctionNode {
             title: description,
             buttons: []
           },
-          dialogs: {}
+          dialogs: {},
+          data: null
         }
       }
       const desktopState = state[page].state

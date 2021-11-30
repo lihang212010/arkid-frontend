@@ -344,7 +344,8 @@ export class ActionNode extends FunctionNode {
   }
 
   addFormItemActionState(items: FormItemsState, path: string, method: string, prefix: string = '') {
-    const actions = this._temp.actions
+    const { _temp: state, _page: page } = this
+    const actions = state.actions
     Object.keys(items).forEach(key => {
       const item = items[key]
       if (item.type === 'FormObjectItem') {
@@ -362,6 +363,12 @@ export class ActionNode extends FunctionNode {
           },
           'fetch'
         ]
+        if (page.includes('.')) {
+          const index = page.lastIndexOf('.')
+          const parentPageName = page.substring(0, index)
+          const currentActionName = page.substring(index + 1)
+          actions![key].push(`${parentPageName}.close${currentActionName}`)
+        }
       }
     })
   }
