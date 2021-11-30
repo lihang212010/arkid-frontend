@@ -7,6 +7,7 @@ export class ChangeStateNode extends APINode {
     const { results, source } = this.inputs
     const { client, clientServer } = source
     const { name, title } = clientServer
+    const buttons = client.buttons
 
     // set app position
     // this.url = '/api/v1/user/appdata/'
@@ -27,7 +28,10 @@ export class ChangeStateNode extends APINode {
           results.forEach((item) => {
             group.items.push({
               type: 'CardPanel',
-              state: item
+              state: {
+                ...item,
+                buttons: buttons.length ? buttons.map(btn => { return { ...btn, data: item } }) : []
+              }
             })
           })
         } else {

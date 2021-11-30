@@ -15,7 +15,7 @@ export class DesktopNode extends FunctionNode {
 
     if (page === 'desktop') {
       let fetchAction: IFlow[] = []
-      let groups: DashboardGroup[] = []
+      const groups: DashboardGroup[] = []
       if (tag) {
         tag.forEach(t => {
           const info = OpenAPI.instance.getOnePageTag(t)
@@ -48,6 +48,7 @@ export class DesktopNode extends FunctionNode {
           created: 'created',
           groups,
           endAction: 'keepAppPosition',
+          buttons: [],
           actions: {
             created: [ 'fetch' ],
             fetch: fetchAction,
@@ -64,6 +65,40 @@ export class DesktopNode extends FunctionNode {
           dialogs: {}
         }
       }
+      const desktopState = state[page].state
+      if (local) {
+        const { tag: localTag, description: localDescription } = local
+        state._pages_.push(localTag)
+        const pageName = localTag.substring(localTag.indexOf('.') + 1)
+        desktopState.dialogs[pageName] = {
+          visible: false,
+          page: localTag
+        }
+        desktopState.actions[`open${pageName}`] = [
+          {
+            name: 'arkfbp/flows/data'
+          },
+          {
+            name: 'arkfbp/flows/assign',
+            response: {
+             [`dialogs.${pageName}.visible`]: true
+            }
+          }
+        ]
+        desktopState.actions[`close${pageName}`] = [
+          {
+            name: 'arkfbp/flows/assign',
+            response: {
+             [`dialogs.${pageName}.visible`]: false
+            }
+          }
+        ]
+        desktopState.buttons.push({
+          label: localDescription,
+          action: `open${pageName}`,
+          size: 'mini'
+        })
+      }
       if (global) {
         const { tag: manageTag } = global.manage
         if (manageTag) {
@@ -72,7 +107,6 @@ export class DesktopNode extends FunctionNode {
             const { page: manageDep, description: manageDescription, name: manageName } = info
             if (manageDep) {
               const { init: manageInit, local: manageLocal } = manageDep
-              const desktopState = state[page].state
               desktopState.dialogs[manageName] = {
                 page: manageName,
                 visible: false

@@ -1,5 +1,15 @@
 <template>
-  <div class="card-panel">
+  <div
+    class="card-panel"
+    @mouseover="onMouseOver"
+    @mouseleave="onMouseLeave"
+  >
+    <template v-if="active && state.buttons && state.buttons.length > 0">
+      <ButtonArray
+        :path="getChildPath('buttons')"
+        class="buttons"
+      />
+    </template>
     <img
       :src="logo"
       @click="handleClick"
@@ -28,12 +38,22 @@ import BaseVue from '@/admin/base/BaseVue'
   components: {}
 })
 export default class extends Mixins(BaseVue) {
+  private active = false
+
   get logo() {
     return this.state.logo || require('@/assets/app.png')
   }
 
   get state(): CardPanelState {
     return this.$state as CardPanelState
+  }
+
+  onMouseOver() {
+    this.active = true
+  }
+
+  onMouseLeave() {
+    this.active = false
   }
 
   handleClick() {
@@ -66,6 +86,15 @@ export default class extends Mixins(BaseVue) {
   margin-left: 12px;
   &:hover {
     box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  }
+
+  .buttons {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   img {
