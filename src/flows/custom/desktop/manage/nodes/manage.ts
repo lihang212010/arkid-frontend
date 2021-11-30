@@ -7,7 +7,11 @@ export class AppManageNode extends APINode {
     this.method = method
     const outputs = await super.run()
     const data = outputs?.data
+    const button = client.card.buttons[0]
     if (data && data.length > 0) {
+      if (button) {
+        button.disabled = false
+      }
       const state = com.getAnyPageState('app_manage')
       const items = {}
       data.forEach((app, index) => {
@@ -25,7 +29,6 @@ export class AppManageNode extends APINode {
       })
       state.form.items = items
     } else {
-      const button = client.card.buttons[0]
       if (button) {
         button.disabled = true
       }

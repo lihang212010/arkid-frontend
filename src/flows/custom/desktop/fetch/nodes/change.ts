@@ -6,6 +6,7 @@ export class ChangeStateNode extends APINode {
   async run() {
     const { results, source } = this.inputs
     const { client, clientServer } = source
+    const { name, title } = clientServer
 
     // set app position
     // this.url = '/api/v1/user/appdata/'
@@ -19,9 +20,10 @@ export class ChangeStateNode extends APINode {
     const groups = client.groups
 
     for (const group of groups) {
-      if (group.name === clientServer) {
+      if (group.name === name) {
         group.items.length = 0
         if (results && results.length > 0) {
+          group.title = title
           results.forEach((item) => {
             group.items.push({
               type: 'CardPanel',

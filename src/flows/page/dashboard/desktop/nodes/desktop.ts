@@ -24,11 +24,14 @@ export class DesktopNode extends FunctionNode {
             fetchAction.push({
               name: 'flows/custom/desktop/fetch',
               url: tInit.path, method: tInit.method,
-              response: info.name
+              response: {
+                name: info.name,
+                title: info.description
+              }
             })
             groups.push({
               name: info.name,
-              title: info.description,
+              title: '',
               items: []
             })
           }
@@ -88,7 +91,7 @@ export class DesktopNode extends FunctionNode {
                 {
                   label: manageDescription,
                   action: 'openAppManageDialog',
-                  disabled: false,
+                  disabled: true,
                   size: 'mini',
                   icon: 'el-icon-edit'
                 }
