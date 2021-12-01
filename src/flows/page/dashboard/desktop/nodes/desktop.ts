@@ -101,69 +101,67 @@ export class DesktopNode extends FunctionNode {
         })
       }
       if (global) {
-        const { tag: manageTag } = global.manage
-        if (manageTag) {
-          const info = OpenAPI.instance.getOnePageTag(manageTag)
+        const { tag: appManageTag, description: appManageDescription } = global.manage
+        state.manage = {
+          type: 'FormPage',
+          state: {
+            created: 'created',
+            card: {
+              title: appManageDescription
+            },
+            actions: {
+              created: [ 'fetch' ],
+              fetch: []
+            },
+            groups: []
+          }
+        }
+        desktopState.dialogs.manage = {
+          page: 'manage',
+          visible: false
+        }
+        desktopState.card.buttons = [
+          {
+            label: appManageDescription,
+            action: 'openManageDialog',
+            size: 'mini',
+            icon: 'el-icon-edit'
+          }
+        ]
+        desktopState.actions.openManageDialog = [
+          {
+            name: 'arkfbp/flows/assign',
+            response: {
+              'dialogs.manage.visible': true
+            }
+          }
+        ]
+        const manageState = state.manage.state
+        for (const t of appManageTag) {
+          const info = OpenAPI.instance.getOnePageTag(t)
           if (info) {
             const { page: manageDep, description: manageDescription, name: manageName } = info
             if (manageDep) {
               const { init: manageInit, local: manageLocal } = manageDep
-              desktopState.dialogs[manageName] = {
-                page: manageName,
-                visible: false
-              }
-              desktopState.actions = Object.assign(desktopState.actions, {
-                openAppManageDialog: [
-                  {
-                    name: 'arkfbp/flows/assign',
-                    response: {
-                      [`dialogs.${manageName}.visible`]: true
-                    }
-                  }
-                ]
+              manageState.actions.fetch.push({
+                name: 'flows/custom/desktop/manage',
+                url: manageInit.path, method: manageInit.method,
+                response: {
+                  name: manageName,
+                  title: manageDescription
+                }
               })
-              desktopState.card.buttons.push(
+              manageState.actions[manageName] = [
                 {
-                  label: manageDescription,
-                  action: 'openAppManageDialog',
-                  disabled: true,
-                  size: 'mini',
-                  icon: 'el-icon-edit'
-                }
-              )
-              state[manageName] = {
-                type: 'FormPage',
-                state: {
-                  created: 'created',
-                  card: {
-                    title: manageDescription
-                  },
-                  actions: {
-                    subscribe: [
-                      {
-                        name: 'arkfbp/flows/data'
-                      },
-                      {
-                        name: 'flows/custom/desktop/subscribe',
-                        url: (manageLocal as ITagPageAction).path,
-                        method: (manageLocal as ITagPageAction).method
-                      },
-                      'desktop.fetch'
-                    ]
-                  },
-                  form: {
-                    items: {}
-                  }
-                }
-              }
-              const actions = state[page].state.actions
-              actions.manage = [
+                  name: 'arkfbp/flows/data'
+                },
                 {
-                  name: 'flows/custom/desktop/manage',
-                  url: manageInit.path, method: manageInit.method
-                }
+                  name: 'flows/custom/desktop/subscribe',
+                  url: (manageLocal as ITagPageAction).path,
+                  method: (manageLocal as ITagPageAction).method
+                },
+                'desktop.fetch'
               ]
-              actions.created.push('manage')
             }
           }
         }

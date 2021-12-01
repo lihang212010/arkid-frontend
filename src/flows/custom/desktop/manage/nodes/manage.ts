@@ -2,17 +2,24 @@ import { APINode } from '@/arkfbp/nodes/apiNode'
 
 export class AppManageNode extends APINode {
   async run() {
-    const { client, url, method, com } = this.inputs
+    const { client, url, method, clientServer, com } = this.inputs
+    const { name, title } = clientServer
     this.url = url
     this.method = method
     const outputs = await super.run()
-    const data = outputs?.data
-    const button = client.card.buttons[0]
+    const data = outputs && outputs.data
     if (data && data.length > 0) {
-      if (button) {
-        button.disabled = false
+      const groups = client.groups
+      let index = -1
+      for (let i = 0, len = groups.length; i < len; i++) {
+        if (groups[i].name === name) {
+          index = i
+          break
+        }
       }
-      const state = com.getAnyPageState('app_manage')
+      if (index !== -1) {
+        groups.splice(index, 1)
+      }
       const items = {}
       data.forEach((app, index) => {
         items[`app${index}`] = {
@@ -22,16 +29,16 @@ export class AppManageNode extends APINode {
           state: {
             value: app.value || false,
             uuid: app.id || app.uuid,
-            action: 'subscribe',
+            action: name,
             data: app
           }
         }
       })
-      state.form.items = items
-    } else {
-      if (button) {
-        button.disabled = true
-      }
+      groups.push({
+        name,
+        title,
+        items
+      })
     }
   }
 }

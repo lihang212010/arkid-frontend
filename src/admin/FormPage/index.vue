@@ -9,6 +9,15 @@
       class="form-page"
       :path="getChildPath('card')"
     >
+      <template v-if="state.groups && state.groups.length > 0">
+        <div
+          v-for="(group, index) in state.groups"
+          :key="index"
+        >
+          <el-divider>{{ group.title }}</el-divider>
+          <Form :path="getChildPath(`groups[${index}]`)" />
+        </div>
+      </template>
       <template v-if="state.select">
         <b>{{ state.select.valueKey }}</b>
         <Select
