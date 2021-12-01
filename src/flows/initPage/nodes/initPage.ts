@@ -10,7 +10,7 @@ const EXPAND_TABLE_PAGE = [ 'contacts_user' ]
 
 const READONLY_PAGE = [ 'profile', 'tenant_config' ]
 
-const TABS_PAGE = [ 'profile', 'third_part_account', 'subuser', 'user_token_manage', 'login_register_extension_config', 'tenant_register_privacy_notice', 'login_register_config', 'profile_config_editfields', 'profile_config_logout', 'profile_config_logging', 'profile_config_token' ]
+const TABS_PAGE = [ 'profile', 'login_register_config' ]
 
 const PAGE_BASE_FLOW = {
   'table_page': 'flows/page/base',
@@ -83,7 +83,7 @@ export class InitPage extends FunctionNode {
       } else if (DASHBOARD_PAGE_FLOW[page]) {
         await runFlowByFile(DASHBOARD_PAGE_FLOW[page], { state, dep, page, options })
       }
-      if (options.isTabPage) {
+      if (page.indexOf('.') === -1) {
         this.initPageTabs(state, page, description)
       }
     }
@@ -101,22 +101,29 @@ export class InitPage extends FunctionNode {
     options.disabled = DISABLED_PAGE.includes(page)
     options.readonly = READONLY_PAGE.includes(page)
     options.tableIsExpand = EXPAND_TABLE_PAGE.includes(page)
-    options.isTabPage = TABS_PAGE.includes(page)
     return options
   }
 
   initPageTabs(state: any, page: string, description: string = '') {
-    if (!state.$tabs) {
-      state.$tabs = {
-        value: page,
-        tabPosition: 'left',
-        stretch: true,
-        items: []
+    const pages = state._pages_
+    if (typeof pages !== 'string') {
+      for (let i = 0, len = pages.length; i < len; i++) {
+        if (TABS_PAGE.indexOf(pages[i]) !== -1) {   
+          if (!state.$tabs) {
+            state.$tabs = {
+              value: page,
+              tabPosition: 'left',
+              stretch: true,
+              items: []
+            }
+          }
+          state.$tabs.items.push({
+            name: page,
+            label: description,
+          })
+          break
+        }
       }
     }
-    state.$tabs.items.push({
-      name: page,
-      label: description,
-    })
   }
 }
