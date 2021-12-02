@@ -44,7 +44,7 @@ export class Extension extends FunctionNode {
         state: {
           label: '搜索',
           type: 'primary',
-          action: 'fetch',
+          action: 'toFilter',
           icon: 'el-icon-search',
           size: 'mini'
         }
@@ -96,6 +96,12 @@ export class Extension extends FunctionNode {
             {
               name: 'arkfbp/flows/openapi'
             }
+          ],
+          toFilter: [
+            {
+              name: 'arkfbp/flows/resetPagination'
+            },
+            'fetch'
           ]
         }
       }
