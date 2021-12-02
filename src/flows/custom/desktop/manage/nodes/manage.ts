@@ -36,7 +36,7 @@ export class AppManageNode extends APINode {
       })
       groups.push({
         name,
-        title,
+        title: name === 'app_manage' ? undefined : title,
         items
       })
     }

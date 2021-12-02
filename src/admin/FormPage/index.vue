@@ -14,7 +14,9 @@
           v-for="(group, index) in state.groups"
           :key="index"
         >
-          <el-divider>{{ group.title }}</el-divider>
+          <el-divider v-if="group.title">
+            {{ group.title }}
+          </el-divider>
           <Form :path="getChildPath(`groups[${index}]`)" />
         </div>
       </template>

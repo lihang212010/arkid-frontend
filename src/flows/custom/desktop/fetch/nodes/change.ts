@@ -6,7 +6,7 @@ export class ChangeStateNode extends APINode {
   async run() {
     const { results, source } = this.inputs
     const { client, clientServer } = source
-    const { name, title } = clientServer
+    const { name, title } = clientServer || {}
     const buttons = client.buttons
 
     // set app position
@@ -19,12 +19,13 @@ export class ChangeStateNode extends APINode {
     UserModule.setUserApps(results || [])
 
     const groups = client.groups
-
     for (const group of groups) {
-      if (group.name === name) {
-        group.items.length = 0
-        if (results && results.length > 0) {
-          group.title = title
+      const flag = groups.length === 1 || group.name === name
+      if (flag) {
+        group.items = []
+        if (results.length === 0) {
+          group.title = ''
+        } else {
           results.forEach((item) => {
             group.items.push({
               type: 'CardPanel',
@@ -34,11 +35,12 @@ export class ChangeStateNode extends APINode {
               }
             })
           })
-        } else {
-          group.title = ''
+          group.title = title
         }
       }
+      if (groups.length === 1) group.title = ''
     }
+    
 
     // set desktop apps panel -- cardpanel
     // if (results && results.length) {

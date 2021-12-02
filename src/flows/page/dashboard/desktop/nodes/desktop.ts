@@ -41,6 +41,11 @@ export class DesktopNode extends FunctionNode {
           name: 'flows/custom/desktop/fetch',
           url: path, method
         })
+        groups.push({
+          name: 'app',
+          title: '',
+          items: []
+        })
       }
       state[page] = {
         type: 'DashboardPage',
@@ -101,7 +106,7 @@ export class DesktopNode extends FunctionNode {
         })
       }
       if (global) {
-        const { tag: appManageTag, description: appManageDescription } = global.manage
+        let { tag: appManageTag, description: appManageDescription } = global.manage
         state.manage = {
           type: 'FormPage',
           state: {
@@ -137,6 +142,9 @@ export class DesktopNode extends FunctionNode {
           }
         ]
         const manageState = state.manage.state
+        if (typeof appManageTag === 'string') {
+          appManageTag = [ appManageTag ]
+        }
         for (const t of appManageTag) {
           const info = OpenAPI.instance.getOnePageTag(t)
           if (info) {
