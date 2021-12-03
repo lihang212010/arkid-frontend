@@ -5,7 +5,8 @@ export function getSchemaByContent(content: { [requestBodyType: string]: {schema
   for (type in content) { // 任意获取一个key
     break
   }
-  let schema = content[type].schema
+  let schema = content && content[type] && content[type].schema
+  if (!schema) return {}
   if (schema.$ref) {
     schema = OpenAPI.instance.getSchemaByRef(schema.$ref)
     if (schema?.properties) {
