@@ -26,11 +26,8 @@ export class ChangePageStateNode extends FunctionNode {
     })
     // danger type
     const button = pageState.buttons[0]
-    if (button) {
-      button.type = 'danger'
-      if (!isManualOverdueToken) {
-        button.disabled = true
-      }
+    if (button && !isManualOverdueToken) {
+      button.disabled = true
     }
   }
 

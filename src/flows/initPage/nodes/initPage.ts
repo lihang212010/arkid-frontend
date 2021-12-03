@@ -10,7 +10,7 @@ const EXPAND_TABLE_PAGE = [ 'contacts_user' ]
 
 const READONLY_PAGE = [ 'profile', 'tenant_config' ]
 
-const TABS_PAGE = [ 'profile', 'login_register_config' ]
+const TABS_PAGE = [ 'profile', 'login_register_config', 'profile_config_editfields' ]
 
 const PAGE_BASE_FLOW = {
   'table_page': 'flows/page/base',

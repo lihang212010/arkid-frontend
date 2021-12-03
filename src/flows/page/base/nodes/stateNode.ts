@@ -523,13 +523,11 @@ export class StateNode extends FunctionNode {
   getButtonState(props: IButtonProps) {
     const pageType = this._type
     const { key, description, mode, role, icon, tag, path, method } = props
-    let available = true
     if (path && method) { // Permission
       if (!hasPermissionByPath(path, method)) return null
     } else if (tag) {
       if (!hasPermission(tag)) return null
     }
-    if (!available) return null
     let action = '', type = 'primary'
     switch (mode) {
       case 'open':
@@ -541,7 +539,7 @@ export class StateNode extends FunctionNode {
       default:
         action = key
     }
-    if (key === 'delete' || key === 'logout' || key === 'logoff') type = 'danger'
+    if (key === 'delete' || key === 'logout' || key === 'logoff' || key === 'token') type = 'danger'
     if (pageType === 'TreePage' && role === 'local') type = 'text'
     if (key === 'import' || key === 'export') type = ''
     return {
