@@ -105,25 +105,22 @@ export class InitPage extends FunctionNode {
   }
 
   initPageTabs(state: any, page: string, description: string = '') {
-    const pages = state._pages_
-    if (typeof pages !== 'string') {
-      for (let i = 0, len = pages.length; i < len; i++) {
-        if (TABS_PAGE.indexOf(pages[i]) !== -1) {   
-          if (!state.$tabs) {
-            state.$tabs = {
-              value: page,
-              tabPosition: 'left',
-              stretch: true,
-              items: []
-            }
-          }
-          state.$tabs.items.push({
-            name: page,
-            label: description,
-          })
-          break
-        }
+    const cards = state._cards_
+    if (!cards) return
+    if (cards.indexOf(page) === -1) return
+    const flag = cards.find(c => TABS_PAGE.includes(c))
+    if (!flag) return
+    if (!state.$tabs) {
+      state.$tabs = {
+        value: page,
+        tabPosition: 'left',
+        stretch: true,
+        items: []
       }
     }
+    state.$tabs.items.push({
+      name: page,
+      label: description,
+    })
   }
 }
