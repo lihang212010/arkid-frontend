@@ -24,7 +24,7 @@
           effect="dark"
           placement="bottom"
         >
-          <notice-center class="right-menu-item" />
+          <notice-center class="right-menu-item hover-effect" />
         </el-tooltip>
         <el-tooltip
           :content="$t('navbar.screenfull')"

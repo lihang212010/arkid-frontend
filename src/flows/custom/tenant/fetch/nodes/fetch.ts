@@ -20,7 +20,7 @@ export class TenantFetch extends APINode {
             state: {
               name: item.name,
               logo: item.icon,
-              description: dateParser(item.created, 'YYYY-MM-DD HH:mm:ss'),
+              description: dateParser(item.created),
               clickAction: 'switch',
               data: item
             }

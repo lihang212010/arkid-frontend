@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 
-export function dateParser(date: string, format: string = '') {
-  return format ? dayjs(date).format(format) : dayjs(date)
+export function dateParser(date: string, format: string = 'YYYY-MM-DD HH:mm:ss') {
+  return dayjs(date).format(format)
 }
 
 // isExternal

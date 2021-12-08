@@ -3,29 +3,51 @@
     class="notice-center"
     placement="bottom"
     trigger="click"
-    width="360"
+    width="540"
+    @show="show"
   >
     <el-tabs
+      v-if="tabs.length > 0"
       v-model="active"
       stretch
+      @tab-click="handleTabClick"
     >
-      <template v-for="(n, i) in notice">
+      <template v-for="(tab, i) in tabs">
         <el-tab-pane
           :key="i"
-          :label="n.label"
-          :name="n.name"
+          :label="tab.label"
+          :name="tab.name"
         >
+          <div v-if="tab.items.length > 0">
+            <div
+              v-for="(item, index) in tab.items"
+              :key="index"
+              class="item"
+            >
+              <div class="content">
+                {{ item.title }}
+              </div>
+              <div class="created">
+                {{ getTime(item.time) }}
+              </div>
+            </div>
+            <el-pagination
+              background
+              :page-size="pageSize"
+              :current-page="currentPage"
+              :page-sizes="[3, 5, 10]"
+              layout="sizes, prev, pager, next, total"
+              :pager-count="5"
+              :total="total"
+              @current-change="onCurrentPageChange"
+              @size-change="onPageSizeChange"
+            />
+          </div>
           <div
-            v-for="(item, index) in n.items"
-            :key="index"
-            class="item"
+            v-else
+            class="placeholder"
           >
-            <div class="content">
-              {{ item.content }}
-            </div>
-            <div class="created">
-              {{ item.created }}
-            </div>
+            暂无数据
           </div>
         </el-tab-pane>
       </template>
@@ -41,18 +63,72 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { NoticeModule } from '@/store/modules/notice'
+import { NOTICE_API } from '@/constants/api'
+import OpenAPI from '@/config/openapi'
+import { runFlowByFile } from '@/arkfbp'
+import { dateParser } from '@/utils/common'
 
 @Component({
   name: 'NoticeCenter'
 })
 export default class extends Vue {
-  get notice() {
-    return NoticeModule.notice
+  private currentPage = 1;
+  private pageSize = 5;
+  private active = '0';
+  private tabs: any[] = [];
+  private total = 0;
+
+  getTime(time: string) {
+    return dateParser(time)
   }
 
-  get active() {
-    return this.notice.length ? this.notice[0].name : ''
+  initTabs() {
+    for (let i = 0, len = NOTICE_API.length; i < len; i++) {
+      const { path, method, description } = NOTICE_API[i]
+      if (OpenAPI.instance.getOperation(path, method)) {
+        this.tabs.push({
+          name: `${i}`,
+          label: description,
+          items: []
+        })
+      }
+    }
+  }
+
+  mounted() {
+    this.initTabs()
+  }
+
+  async onCurrentPageChange(page: number) {
+    this.currentPage = page
+    await this.show()
+  }
+
+  async onPageSizeChange(size: number) {
+    this.pageSize = size
+    await this.show()
+  }
+
+  async handleTabClick() {
+    await this.show()
+  }
+
+  async show() {
+    const index = Number(this.active)
+    const action = NOTICE_API[index]
+    const { path: url, method } = action
+    await runFlowByFile('arkfbp/flows/notice', {
+      url,
+      method,
+      client: {
+        state: this.tabs[index],
+        total: this.total
+      },
+      request: {
+        page: this.currentPage,
+        pageSize: this.pageSize
+      }
+    })
   }
 }
 </script>
@@ -80,7 +156,12 @@ export default class extends Vue {
     background: rgba(0, 0, 0, 0.025);
   }
 }
-.notice-icon{
+.placeholder {
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+}
+.notice-icon {
   cursor: pointer;
   font-size: 18px;
   vertical-align: middle;
@@ -97,6 +178,5 @@ export default class extends Vue {
 }
 .created {
   color: rgba(0, 0, 0, 0.45);
-  text-indent: 16px;
 }
 </style>
