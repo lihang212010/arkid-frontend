@@ -1,21 +1,21 @@
 <template>
-  <div
-    v-if="state"
-    :class="page"
-  >
-    <Tabs
-      v-if="state.$tabs"
-      path="admin.adminState.$tabs"
-      class="admin-tabs-page"
-    />
-    <template v-else>
-      <AdminComponent
-        v-for="(card, index) in cards"
-        :key="index"
-        :path="`admin.adminState[${card}]`"
-        :class="`admin-page admin-${card}-page`"
+  <div v-if="state">
+    <MainHeader v-if="name === 'desktop'" />
+    <div :class="page">
+      <Tabs
+        v-if="state.$tabs"
+        path="admin.adminState.$tabs"
+        class="admin-tabs-page"
       />
-    </template>
+      <template v-else>
+        <AdminComponent
+          v-for="(card, index) in cards"
+          :key="index"
+          :path="`admin.adminState[${card}]`"
+          :class="`admin-page admin-${card}-page`"
+        />
+      </template>
+    </div>
   </div>
   <div v-else-if="url">
     <iframe :src="url" />
@@ -30,7 +30,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import BaseVue from '@/admin/base/BaseVue'
 import { AdminModule } from '@/store/modules/admin'
 import { runFlowByFile } from '@/arkfbp/index'
 
@@ -40,6 +39,10 @@ import { runFlowByFile } from '@/arkfbp/index'
 export default class extends Vue {
   private get state() {
     return AdminModule.adminState
+  }
+
+  private get name() {
+    return this.$route.name
   }
 
   private get page(): string | string[] {
@@ -57,7 +60,7 @@ export default class extends Vue {
   async created() {
     if (this.page) {
       const state = Object.create({ _pages_: [...this.cards], _cards_: [...this.cards] })
-      await runFlowByFile('flows/initPage', { state }).then(_ => {
+      await runFlowByFile('flows/initPage', { state }).then(() => {
         AdminModule.setAdminState(state)
       })
     }
