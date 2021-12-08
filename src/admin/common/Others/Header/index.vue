@@ -59,7 +59,7 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 .main-header {
-  background-color: #fff;
+  background-color: #E7F3FF;
   padding: 0 20px 0 20px;
   width: 100%;
   height: 100px;

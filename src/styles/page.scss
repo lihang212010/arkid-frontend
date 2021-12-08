@@ -26,12 +26,18 @@
   height: calc(100vh - 186px) !important;
   overflow: hidden !important;
   box-sizing: border-box;
+  background-color: #E7F3FF;
 
   .dashboard-page {
     flex: 3;
     height: 100%;
     margin: 0px;
+    // border: 1px solid #999;
+    ::v-deep .el-card {
+      background-color: #E7F3FF;
+    }
     ::v-deep .el-card__body {
+      // border-top: 1px solid #999;
       padding: 0px;
       height: calc(100% - 55px);
       overflow: auto;
@@ -48,7 +54,14 @@
     margin: 0px;
     height: 100%;
     margin-left: 1rem;
+    // border: 1px solid #999;
     overflow: auto;
+    ::v-deep .el-collapse-item__header {
+      background-color: #E7F3FF;
+    }
+    ::v-deep .el-collapse-item__wrap {
+      background-color: #E7F3FF;
+    }
   }
 }
 

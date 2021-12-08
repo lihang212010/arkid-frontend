@@ -1,5 +1,8 @@
 <template>
-  <div class="navbar">
+  <div
+    class="navbar"
+    :class="classPrefix"
+  >
     <hamburger
       id="hamburger-container"
       :is-active="sidebar.opened"
@@ -105,6 +108,10 @@ export default class extends Vue {
     return AppModule.sidebar
   }
 
+  get classPrefix() {
+    return this.$route.name === 'desktop' ? 'navbar-bgc' : ''
+  }
+
   get device() {
     return AppModule.device.toString()
   }
@@ -136,6 +143,10 @@ export default class extends Vue {
   position: relative;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+
+  &.navbar-bgc {
+    background-color: #E7F3FF;
+  }
 
   .hamburger-container {
     line-height: 46px;

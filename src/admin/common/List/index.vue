@@ -130,9 +130,6 @@ export default class extends Mixins(BaseVue) {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  &:hover {
-    background-color: #f5f6f8;
-  }
 }
 
 ::v-deep .el-collapse-item__content {
