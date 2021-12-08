@@ -51,26 +51,13 @@
             :src="avatar"
             class="user-avatar"
           >
-          <div
-            v-else
-            class="user-avatar-placeholder"
-          >
-            {{ username[0].toUpperCase() }}
-          </div>
+          <span>{{ username }}</span>
         </div>
         <el-dropdown-menu
           slot="dropdown"
           class="usercenter-dropdown-menu"
         >
-          <el-dropdown-item>
-            <span style="display: block">
-              {{ username }}
-            </span>
-          </el-dropdown-item>
-          <el-dropdown-item
-            divided
-            @click.native="logout"
-          >
+          <el-dropdown-item @click.native="logout">
             <span style="display: block">
               {{ $t("navbar.logOut") }}
             </span>
@@ -114,7 +101,7 @@ export default class extends Vue {
   }
 
   get avatar() {
-    return UserModule.avatar
+    return UserModule.avatar || require('@/assets/avatar.png')
   }
 
   get username() {
@@ -184,8 +171,6 @@ export default class extends Vue {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background 0.3s;
-
         &:hover {
           background: rgba(0, 0, 0, 0.025);
         }
@@ -196,32 +181,17 @@ export default class extends Vue {
       margin-right: 15px;
 
       .avatar-wrapper {
-        margin-top: 5px;
         position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         cursor: pointer;
 
         .user-avatar {
-          width: 40px;
-          height: 40px;
+          width: 30px;
+          height: 30px;
           border-radius: 10px;
-        }
-
-        .user-avatar-placeholder {
-          width: 40px;
-          height: 40px;
-          border-radius: 20px;
-          background-color: #006064;
-          color: #fff;
-          text-align: center;
-          line-height: 40px;
-        }
-
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+          margin-right: 5px;
         }
       }
     }
