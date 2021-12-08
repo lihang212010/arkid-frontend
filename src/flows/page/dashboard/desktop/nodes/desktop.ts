@@ -175,13 +175,13 @@ export class DesktopNode extends FunctionNode {
         }
       }
     } else {
-      if (!state.notice) {
-        state.notice = {
+      if (!state[page]) {
+        state[page] = {
           type: 'Notice',
           state: {}
         }
       }
-      const noticeLists = state.notice.state
+      const noticeLists = state[page].state
       let items
       if (path && method) {
         const schema = getSchemaByPath(path, method)
@@ -192,7 +192,7 @@ export class DesktopNode extends FunctionNode {
       }
       noticeLists[page] = {
         created: 'created',
-        title: description || '消息列表',
+        title: description,
         items: [],
         isActive: true,
         detail: {

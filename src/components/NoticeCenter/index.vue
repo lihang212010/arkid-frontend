@@ -30,11 +30,12 @@
         </el-tab-pane>
       </template>
     </el-tabs>
-    <svg-icon
+    <el-badge
       slot="reference"
-      class="notice-icon"
-      name="notice"
-    />
+      is-dot
+    >
+      <i class="el-icon-message-solid" />
+    </el-badge>
   </el-popover>
 </template>
 
@@ -61,6 +62,15 @@ export default class extends Vue {
   font-size: 15px;
   font-weight: bold;
 }
+
+::v-deep .el-badge__content.is-fixed {
+  top: 15px;
+}
+
+.el-icon-message-solid {
+  cursor: pointer;
+}
+
 .notice-center {
   height: 100%;
   display: inline-block;

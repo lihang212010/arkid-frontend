@@ -20,6 +20,13 @@
           <header-search class="right-menu-item" />
         </el-tooltip>
         <el-tooltip
+          :content="$t('navbar.notice')"
+          effect="dark"
+          placement="bottom"
+        >
+          <notice-center class="right-menu-item" />
+        </el-tooltip>
+        <el-tooltip
           :content="$t('navbar.screenfull')"
           effect="dark"
           placement="bottom"
@@ -78,6 +85,7 @@ import HeaderSearch from '@/components/HeaderSearch/index.vue'
 import LangSelect from '@/components/LangSelect/index.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
 import SizeSelect from '@/components/SizeSelect/index.vue'
+import NoticeCenter from '@/components/NoticeCenter/index.vue'
 import { runFlowByFile } from '@/arkfbp/index'
 
 @Component({
@@ -88,7 +96,8 @@ import { runFlowByFile } from '@/arkfbp/index'
     HeaderSearch,
     LangSelect,
     Screenfull,
-    SizeSelect
+    SizeSelect,
+    NoticeCenter
   }
 })
 export default class extends Vue {
