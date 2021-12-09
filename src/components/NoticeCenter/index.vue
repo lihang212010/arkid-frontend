@@ -7,7 +7,6 @@
     @show="show"
   >
     <el-tabs
-      v-if="tabs.length > 0"
       v-model="active"
       stretch
       @tab-click="handleTabClick"
@@ -23,6 +22,7 @@
               v-for="(item, index) in tab.items"
               :key="index"
               class="item"
+              @click="handleClickItem(item)"
             >
               <div class="content">
                 {{ item.title }}
@@ -58,6 +58,24 @@
     >
       <i class="el-icon-message-solid" />
     </el-badge>
+    <el-dialog
+      :visible.sync="visible"
+      title="具体信息"
+      :modal="false"
+    >
+      <el-descriptions
+        border
+        :column="2"
+      >
+        <el-descriptions-item
+          v-for="(item, index) in contents"
+          :key="index"
+          :label="item.label"
+        >
+          {{ item.value }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </el-popover>
 </template>
 
@@ -77,6 +95,8 @@ export default class extends Vue {
   private active = '0';
   private tabs: any[] = [];
   private total = 0;
+  private visible = false;
+  private contents: any[] = [];
 
   getTime(time: string) {
     return dateParser(time)
@@ -92,6 +112,24 @@ export default class extends Vue {
           items: []
         })
       }
+    }
+  }
+
+  handleClickItem(item) {
+    const { content, url } = item
+    if (url) {
+      window.open(url, '_blank')
+    } else if (content) {
+      this.contents = []
+      if (typeof content === 'string') {
+        this.contents.push({ label: 'content', value: content })
+      } else {
+        const keys = Object.keys(content)
+        for (const key of keys) {
+          this.contents.push({ label: key, value: content[key] })
+        }
+      }
+      this.visible = true
     }
   }
 
@@ -143,6 +181,14 @@ export default class extends Vue {
   top: 15px;
 }
 
+::v-deep .el-dialog__body {
+  padding: 0px;
+}
+
+::v-deep .el-dialog__header {
+  font-weight: bold;
+}
+
 .el-icon-message-solid {
   cursor: pointer;
 }
@@ -169,6 +215,10 @@ export default class extends Vue {
 .item {
   border-bottom: 1px solid #e5e7eb;
   padding: 5px;
+  &:hover {
+    cursor: pointer;
+    background-color: rgb(245, 245, 245);
+  }
 }
 .content {
   font-weight: bold;

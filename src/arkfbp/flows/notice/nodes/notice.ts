@@ -7,7 +7,9 @@ export class NoticeNode extends APINode {
     this.method = method
     this.params = request
     const outputs = await super.run()
-    client.state.items = outputs.results
-    client.total = outputs.count
+    if (outputs && outputs.results) {
+      client.state.items = outputs.results
+      client.total = outputs.count
+    }
   }
 }
