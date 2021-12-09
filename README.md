@@ -7,7 +7,7 @@
  -- treepage
 
 特殊页面
- -- api document 类型的 iframe 等
+ -- api document 类型的 iframe 等。
 
 ### 基础结构
 
