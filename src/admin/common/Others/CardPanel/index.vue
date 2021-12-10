@@ -24,6 +24,18 @@
       <div class="description">
         {{ state.description }}
       </div>
+      <div
+        v-if="state.tags"
+        class="tags"
+      >
+        <span
+          v-for="(tag, index) in state.tags"
+          :key="index"
+        >
+          <span>{{ tag.label }}</span> :
+          <el-tag size="mini">{{ tag.value }}</el-tag>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -32,6 +44,7 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import CardPanelState from './CardPanelState'
 import BaseVue from '@/admin/base/BaseVue'
+import { getToken } from '@/utils/auth'
 
 @Component({
   name: 'CardPanel',
@@ -56,11 +69,16 @@ export default class extends Mixins(BaseVue) {
     this.active = false
   }
 
+  get token() {
+    return getToken()
+  }
+
   handleClick() {
-    const { clickAction: action, url } = this.state
+    let { clickAction: action, url } = this.state
     if (action) {
       this.runAction(action)
     } else if (url) {
+      if (this.token) url = url.replace(/\{token\}/g, this.token)
       window.open(url, '_blank')
     } else {
       this.$message({
@@ -123,6 +141,9 @@ export default class extends Mixins(BaseVue) {
     .description {
       font-weight: 400;
       color: #909399;
+    }
+    .tags {
+      display: flex;
     }
   }
 }
