@@ -5,6 +5,7 @@ export class ChangeStateNode extends APINode {
 
   async run() {
     const { results, source } = this.inputs
+    if (!results) return
     const { client, clientServer } = source
     const { name, title } = clientServer || {}
     const buttons = client.buttons
