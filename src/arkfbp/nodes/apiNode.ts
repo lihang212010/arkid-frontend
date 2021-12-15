@@ -19,15 +19,16 @@ export class APINode extends FunctionNode {
   }
 
   initOptions() {
-    const options = this.options
-    options.url = this.url
-    options.method = this.method as Method
-    options.headers = this.headers
-    options.responseType = this.responseType as ResponseType
+    this.options = {
+      url: this.url,
+      method: this.method as Method,
+      headers: this.headers,
+      responseType: this.responseType as ResponseType,
+    }
     if (this.method.toUpperCase() === 'GET') {
-      options.params = this.params
+      this.options.params = this.params
     } else {
-      options.data = this.params
+      this.options.data = this.params
     }
   }
 

@@ -1,4 +1,4 @@
-import { APINode } from 'arkfbp/lib/apiNode'
+import { APINode } from '@/arkfbp/nodes/apiNode'
 import { ConfigModule } from '@/store/modules/config'
 import isIp from 'is-ip'
 

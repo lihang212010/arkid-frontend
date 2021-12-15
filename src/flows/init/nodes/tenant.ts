@@ -1,34 +1,32 @@
-import { APINode } from "arkfbp/lib/apiNode"
+import { APINode } from "@/arkfbp/nodes/apiNode"
 import { TenantModule } from '@/store/modules/tenant'
 import { getSlug, getUrlParamByName } from '@/utils/url'
 import getBaseUrl from '@/utils/get-base-url'
 import { processUUId } from '@/utils/common'
 import { ConfigModule } from '@/store/modules/config'
-import OpenAPI from '@/config/openapi'
 
 export class TenantNode extends APINode {
   async run() {
-    let uuid = '', tenantSwitch = true
-    if (OpenAPI.instance.getOperation('/api/v1/tenant_switchinfo/', 'get')) {
-      this.url = '/api/v1/tenant_switchinfo/'
-      this.method = 'get'
-      const data = await super.run()
-      uuid = data.platform_tenant_uuid
-      tenantSwitch = data.switch
-    }
+    let uuid = '', tenantSwitch = true, currentTenantUUID = ''
+
+    // platform uuid and tenant switch info
+    this.url = '/api/v1/tenant_switchinfo/'
+    this.method = 'GET'
+    const outputs = await super.run()
+    uuid = outputs?.platform_tenant_uuid
+    tenantSwitch = outputs?.switch
     TenantModule.setTenantSwitch(tenantSwitch)
     const slug = getSlug()
     if (slug === '') {
-      TenantModule.changeCurrentTenant({ uuid })
-      let platformUUId = uuid || getUrlParamByName('tenant') || getUrlParamByName('tenant_uuid')
-      if (platformUUId) {
-        platformUUId = processUUId(platformUUId)
-        this.url = '/api/v1/tenant/' + platformUUId + '/'
-        this.method = 'GET'
-        const outputs = await super.run()
-        if (outputs?.uuid) {
-          TenantModule.changeCurrentTenant(outputs)
-        }
+      currentTenantUUID = getUrlParamByName('tenant') || getUrlParamByName('tenant_uuid') || uuid
+      currentTenantUUID = processUUId(currentTenantUUID) as string
+      this.url = `/api/v1/tenant/${currentTenantUUID}/`
+      this.method = 'GET'
+      const outputs = await super.run()
+      if (outputs?.uuid) {
+        TenantModule.changeCurrentTenant(outputs)
+      } else {
+        TenantModule.changeCurrentTenant({ uuid: currentTenantUUID })
       }
     } else {
       if (tenantSwitch === false) {
