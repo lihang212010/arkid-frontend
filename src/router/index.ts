@@ -97,8 +97,4 @@ router.beforeEach((to, from, next) => {
   nextUrl === '' ? next() : next(nextUrl)
 })
 
-export const getNext = (next: string, query) => {
-
-}
-
 export default router
