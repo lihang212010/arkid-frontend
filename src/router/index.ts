@@ -3,7 +3,7 @@ import Router, { RouteConfig } from 'vue-router'
 import { TenantModule } from '@/store/modules/tenant'
 import { UserModule, UserRole } from '@/store/modules/user'
 import { getDynamicRoutes } from './dynamic'
-import { getToken } from '@/utils/auth'
+import { getToken, setToken } from '@/utils/auth'
 import { ConfigModule } from '@/store/modules/config'
 
 /* Solve the problem of router repeatedly jumping to the same route */
@@ -49,16 +49,25 @@ const createRouter = () => new Router({
 const router = createRouter()
 
 router.beforeEach((to, from, next) => {
+  const { query, path } = to
+  const { next: qn, token: qt } = query || {}
+  if (qt && typeof qt === 'string') { setToken(qt) }
   const isLogin = getToken()  
   const uuid = TenantModule.currentTenant.uuid
   const role = UserModule.role
   const isVisibleDesktop = ConfigModule.desktop.visible
   const tenantSwitch = TenantModule.tenantSwitch
   let nextUrl = ''
-  const { query, path } = to
   if (isLogin) {
-    if (query && query.next) {
-      nextUrl = ''
+    if (qn) {
+      let n = ''
+      const keys = Object.keys(query)
+      for (const key of keys) {
+        if (key === 'next') continue
+        n += `&${key}=${query[key]}`
+      }
+      n = n.replace('&', '?')
+      window.location.replace(window.location.origin + n)
     } else {
       const t = isVisibleDesktop ? ( path === '/desktop' ? '' : '/desktop' ) : '/mine/profile'
       const flag = role === UserRole.Platform && tenantSwitch === true 
@@ -87,5 +96,9 @@ router.beforeEach((to, from, next) => {
 
   nextUrl === '' ? next() : next(nextUrl)
 })
+
+export const getNext = (next: string, query) => {
+
+}
 
 export default router
