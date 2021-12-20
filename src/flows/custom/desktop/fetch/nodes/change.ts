@@ -6,9 +6,17 @@ export class ChangeStateNode extends APINode {
   async run() {
     const { results, source } = this.inputs
     if (!results) return
-    const { client, clientServer } = source
-    const { name, title } = clientServer || {}
-    const buttons = client.buttons
+    const client = source.client
+    const { buttons, card, groups } = client
+    const { app_manage, application_group, multiple_account_edit, results: res } = results
+
+    if (!app_manage) {
+      card.buttons = []
+    }
+
+    if (!multiple_account_edit) {
+      buttons.splice(0, buttons.length)
+    }
 
     // set app position
     // this.url = '/api/v1/user/appdata/'
@@ -17,52 +25,55 @@ export class ChangeStateNode extends APINode {
     // const data = res.data || []
 
     // save for headers search function
-    UserModule.setUserApps(results || [])
+    const desktopApps = new Array()
 
-    const groups = client.groups
-    for (const group of groups) {
-      const flag = groups.length === 1 || group.name === name
-      if (flag) {
-        group.items = []
-        if (results.length === 0) {
-          group.title = ''
-        } else {
-          results.forEach((item) => {
-            group.items.push({
+    if (res && res.length > 0) {
+      
+      groups.splice(0, groups.length)
+
+      if (application_group) {
+        for (let i = 0, l = res.length; i < l; i++) {
+          const { apps, group_name } = res[i]
+          if (apps?.length === 0) continue
+          const items = apps.map(app => {
+            desktopApps.push(app)
+            return {
               type: 'CardPanel',
               state: {
-                ...item,
-                buttons: buttons.length ? buttons.map(btn => { return { ...btn, data: item } }) : []
+                ...app,
+                buttons: multiple_account_edit ? buttons.map(btn => {
+                  return { ...btn, data: app }
+                }) : []
               }
-            })
+            }
           })
-          group.title = title
+          groups.push({
+            name: i,
+            title: group_name,
+            items
+          })
         }
+      } else {
+        const items = new Array()
+        for (let i = 0, l = res.length; i < l; i++) {
+          items.push({
+            type: 'CardPanel',
+            state: {
+              ...res[i],
+              buttons: multiple_account_edit ? buttons.map(btn => {
+                return { ...btn, data: res[i] }
+              }) : []
+            }
+          })
+        }
+        groups.push({
+          name: '',
+          title: undefined,
+          items
+        })
       }
-      if (groups.length === 1) group.title = ''
     }
     
-
-    // set desktop apps panel -- cardpanel
-    // if (results && results.length) {
-    //   const firstArr = new Array()
-    //   const secondArr = new Array()
-    //   results.forEach(app => {
-    //     const uuid = app.uuid
-    //     const index = data.indexOf(uuid)
-    //     if (index !== -1) {
-    //       firstArr[index] = {
-    //         type: 'CardPanel',
-    //         state: app
-    //       }
-    //     } else {
-    //       secondArr.push({
-    //         type: 'CardPanel',
-    //         state: app
-    //       })
-    //     }
-    //   })
-    //   client.items = firstArr.concat(secondArr)
-    // }
+    UserModule.setUserApps(desktopApps)
   }
 }

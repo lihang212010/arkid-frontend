@@ -14,49 +14,19 @@ export class DesktopNode extends FunctionNode {
     const { path, method, tag } = init
 
     if (page === 'desktop') {
-      let fetchAction: IFlow[] = []
-      const groups: DashboardGroup[] = []
-      if (tag) {
-        tag.forEach(t => {
-          const info = OpenAPI.instance.getOnePageTag(t)
-          if (info && info.page) {
-            const tInit = info.page.init
-            fetchAction.push({
-              name: 'flows/custom/desktop/fetch',
-              url: tInit.path, method: tInit.method,
-              response: {
-                name: info.name,
-                title: info.description
-              }
-            })
-            groups.push({
-              name: info.name,
-              title: '',
-              items: []
-            })
-          }
-        })
-      } else if (path && method) {
-        fetchAction.push({
-          name: 'flows/custom/desktop/fetch',
-          url: path, method
-        })
-        groups.push({
-          name: 'app',
-          title: '',
-          items: []
-        })
-      }
       state[page] = {
         type: 'DashboardPage',
         state: {
           created: 'created',
-          groups,
+          groups: [],
           endAction: 'keepAppPosition',
           buttons: [],
           actions: {
             created: [ 'fetch' ],
-            fetch: fetchAction,
+            fetch: [{
+              name: 'flows/custom/desktop/fetch',
+              url: path, method,
+            }],
             keepAppPosition: [
               {
                 name: 'flows/custom/desktop/adjust'
@@ -106,7 +76,7 @@ export class DesktopNode extends FunctionNode {
         })
       }
       if (global) {
-        let { tag: appManageTag, description: appManageDescription } = global.manage
+        let { tag: t, description: appManageDescription } = global.manage
         state.manage = {
           type: 'FormPage',
           state: {
@@ -142,35 +112,29 @@ export class DesktopNode extends FunctionNode {
           }
         ]
         const manageState = state.manage.state
-        if (typeof appManageTag === 'string') {
-          appManageTag = [ appManageTag ]
-        }
-        for (const t of appManageTag) {
-          const info = OpenAPI.instance.getOnePageTag(t)
-          if (info) {
-            const { page: manageDep, description: manageDescription, name: manageName } = info
-            if (manageDep) {
-              const { init: manageInit, local: manageLocal } = manageDep
-              manageState.actions.fetch.push({
-                name: 'flows/custom/desktop/manage',
-                url: manageInit.path, method: manageInit.method,
-                response: {
-                  name: manageName,
-                  title: manageDescription
-                }
-              })
-              manageState.actions[manageName] = [
-                {
-                  name: 'arkfbp/flows/data'
-                },
-                {
-                  name: 'flows/custom/desktop/subscribe',
-                  url: (manageLocal as ITagPageAction).path,
-                  method: (manageLocal as ITagPageAction).method
-                },
-                'desktop.fetch'
-              ]
-            }
+        const info = OpenAPI.instance.getOnePageTag(t)
+        if (info) {
+          const { page: manageDep, name: manageName } = info
+          if (manageDep) {
+            const { init: manageInit, local: manageLocal } = manageDep
+            manageState.actions.fetch.push({
+              name: 'flows/custom/desktop/manage',
+              url: manageInit.path, method: manageInit.method,
+              response: {
+                name: manageName
+              }
+            })
+            manageState.actions[manageName] = [
+              {
+                name: 'arkfbp/flows/data'
+              },
+              {
+                name: 'flows/custom/desktop/subscribe',
+                url: (manageLocal as ITagPageAction).path,
+                method: (manageLocal as ITagPageAction).method
+              },
+              'desktop.fetch'
+            ]
           }
         }
       }
