@@ -27,7 +27,7 @@ export default class Login extends Vue {
   private config: LoginPagesConfig = {}
   private tenant: LoginTenant = {}
 
-  async mounted() {
+  async created() {
     await this.getLoginPage()
   }
 

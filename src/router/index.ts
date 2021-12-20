@@ -49,25 +49,16 @@ const createRouter = () => new Router({
 const router = createRouter()
 
 router.beforeEach((to, from, next) => {
-  const { query, path } = to
-  const { next: qn, token: qt } = query || {}
-  if (qt && typeof qt === 'string') { setToken(qt) }
   const isLogin = getToken()  
   const uuid = TenantModule.currentTenant.uuid
   const role = UserModule.role
   const isVisibleDesktop = ConfigModule.desktop.visible
   const tenantSwitch = TenantModule.tenantSwitch
   let nextUrl = ''
+  const { query, path } = to
   if (isLogin) {
-    if (qn) {
-      let n = ''
-      const keys = Object.keys(query)
-      for (const key of keys) {
-        if (key === 'next') continue
-        n += `&${key}=${query[key]}`
-      }
-      n = n.replace('&', '?')
-      window.location.replace(window.location.origin + n)
+    if (query && query.next) {
+      nextUrl = ''
     } else {
       const t = isVisibleDesktop ? ( path === '/desktop' ? '' : '/desktop' ) : '/mine/profile'
       const flag = role === UserRole.Platform && tenantSwitch === true 
