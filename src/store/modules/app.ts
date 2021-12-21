@@ -1,5 +1,6 @@
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
-import { getSidebarStatus, getSize, setSidebarStatus, setLanguage, setSize } from '@/utils/cookies'
+import { getSidebarStatus, getSize, getIntroStatus, setSidebarStatus, setLanguage, setSize, setIntroStatus } from '@/utils/cookies'
+import { UserModule } from './user'
 import { getLocale } from '@/lang'
 import store from '@/store'
 
@@ -7,6 +8,10 @@ export enum DeviceType {
   Mobile,
   Desktop,
 }
+
+type IntroStatus = 'needed' | 'unneeded'
+
+const introKey = UserModule.username ? `${UserModule.username}_intro_status` : 'intro_status'
 
 export interface IAppState {
   device: DeviceType
@@ -16,6 +21,7 @@ export interface IAppState {
   }
   language: string
   size: string
+  introStatus: boolean
 }
 
 @Module({ dynamic: true, store, name: 'app' })
@@ -28,6 +34,8 @@ class App extends VuexModule implements IAppState {
   public device = DeviceType.Desktop
   public language = getLocale()
   public size = getSize() || 'medium'
+
+  public introStatus = getIntroStatus(introKey) !== 'unneeded'
 
   @Mutation
   private TOGGLE_SIDEBAR(withoutAnimation: boolean) {
@@ -64,6 +72,17 @@ class App extends VuexModule implements IAppState {
     setSize(this.size)
   }
 
+  @Mutation
+  private SET_INTRO_STATUS(status: IntroStatus) {
+    if (status === 'needed') {
+      this.introStatus = true
+    }
+    if (status === 'unneeded') {
+      this.introStatus = false
+    }
+    setIntroStatus(introKey, status)
+  }
+
   @Action
   public ToggleSideBar(withoutAnimation: boolean) {
     this.TOGGLE_SIDEBAR(withoutAnimation)
@@ -87,6 +106,11 @@ class App extends VuexModule implements IAppState {
   @Action
   public SetSize(size: string) {
     this.SET_SIZE(size)
+  }
+
+  @Action
+  public SetIntroStatus(status: IntroStatus) {
+    this.SET_INTRO_STATUS(status)
   }
 }
 

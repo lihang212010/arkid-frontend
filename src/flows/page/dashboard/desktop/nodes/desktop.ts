@@ -2,8 +2,7 @@ import { FunctionNode } from 'arkfbp/lib/functionNode'
 import { getSchemaByPath } from '@/utils/schema'
 import generateForm from '@/utils/form'
 import OpenAPI, { ITagPageAction } from '@/config/openapi'
-import { IFlow } from '@/arkfbp'
-import { DashboardGroup } from '@/admin/DashboardPage/DashboardPageState'
+import { AppModule } from '@/store/modules/app'
 
 export class DesktopNode extends FunctionNode {
   async run() {
@@ -23,10 +22,12 @@ export class DesktopNode extends FunctionNode {
           buttons: [],
           actions: {
             created: [ 'fetch' ],
-            fetch: [{
-              name: 'flows/custom/desktop/fetch',
-              url: path, method,
-            }],
+            fetch: [
+              {
+                name: 'flows/custom/desktop/fetch',
+                url: path, method,
+              },
+            ],
             keepAppPosition: [
               {
                 name: 'flows/custom/desktop/adjust'
@@ -42,6 +43,14 @@ export class DesktopNode extends FunctionNode {
         }
       }
       const desktopState = state[page].state
+
+      // add intro for desktop user
+      if (AppModule.introStatus === true) {
+        desktopState.actions.fetch.push({
+          name: 'flows/custom/intro'
+        })
+      }
+
       if (local) {
         const { tag: localTag, description: localDescription } = local
         state._pages_.push(localTag)

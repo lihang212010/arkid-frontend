@@ -12,3 +12,6 @@ export const setLanguage = (language: string) => Cookies.set(languageKey, langua
 const sizeKey = 'size'
 export const getSize = () => Cookies.get(sizeKey)
 export const setSize = (size: string) => Cookies.set(sizeKey, size)
+
+export const getIntroStatus = (key: string) => window.localStorage.getItem(key)
+export const setIntroStatus = (key: string, status: string) => window.localStorage.setItem(key, status)
