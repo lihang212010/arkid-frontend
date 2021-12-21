@@ -65,6 +65,7 @@ export class ChangeStateNode extends APINode {
               }) : []
             }
           })
+          desktopApps.push(res[i])
         }
         groups.push({
           name: '',
