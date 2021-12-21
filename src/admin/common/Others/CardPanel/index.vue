@@ -45,6 +45,7 @@ import { Component, Mixins } from 'vue-property-decorator'
 import CardPanelState from './CardPanelState'
 import BaseVue from '@/admin/base/BaseVue'
 import { getToken } from '@/utils/auth'
+import { AppModule } from '@/store/modules/app'
 
 @Component({
   name: 'CardPanel',
@@ -74,18 +75,21 @@ export default class extends Mixins(BaseVue) {
   }
 
   handleClick() {
-    let { clickAction: action, url } = this.state
+    let { clickAction: action, url, is_bind: isBind, bindAction } = this.state
     if (action) {
       this.runAction(action)
-    } else if (url) {
-      if (this.token) url = url.replace(/\{token\}/g, this.token)
-      window.open(url, '_blank')
     } else {
-      this.$message({
-        message: '该应用未设置相关点击操作',
-        type: 'info',
-        showClose: true
-      })
+      if (!isBind) {
+        this.$message({
+          message: '尚未绑定子系统账号，请先绑定',
+          showClose: true
+        })
+        AppModule.SetAppBindStatus(false)
+        if (bindAction) this.runAction(bindAction)
+      } else if (url) {
+        if (this.token) url = url.replace(/\{token\}/g, this.token)
+        window.open(url, '_blank')
+      }
     }
   }
 }

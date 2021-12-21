@@ -32,6 +32,12 @@ export class DesktopNode extends FunctionNode {
               {
                 name: 'flows/custom/desktop/adjust'
               }
+            ],
+            tobind: [
+              {
+                name: 'arkfbp/flows/jumper',
+                target: '/mine'
+              }
             ]
           },
           card: {

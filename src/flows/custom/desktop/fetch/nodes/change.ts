@@ -43,7 +43,8 @@ export class ChangeStateNode extends APINode {
                 ...app,
                 buttons: multiple_account_edit ? buttons.map(btn => {
                   return { ...btn, data: app }
-                }) : []
+                }) : [],
+                bindAction: app?.is_bind ? undefined : 'tobind',
               }
             }
           })
@@ -56,16 +57,18 @@ export class ChangeStateNode extends APINode {
       } else {
         const items = new Array()
         for (let i = 0, l = res.length; i < l; i++) {
+          const item = res[i]
           items.push({
             type: 'CardPanel',
             state: {
-              ...res[i],
+              ...item,
               buttons: multiple_account_edit ? buttons.map(btn => {
-                return { ...btn, data: res[i] }
-              }) : []
+                return { ...btn, data: item }
+              }) : [],
+              bindAction: item?.is_bind ? undefined : 'tobind',
             }
           })
-          desktopApps.push(res[i])
+          desktopApps.push(item)
         }
         groups.push({
           name: '',

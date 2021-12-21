@@ -10,4 +10,6 @@ export default interface CardPanelState {
   clickAction?: string | Function // display more operations
   buttons?: ButtonState[]
   data?: any
+  is_bind?: boolean
+  bindAction?: string
 }

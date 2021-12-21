@@ -22,6 +22,7 @@ export interface IAppState {
   language: string
   size: string
   introStatus: boolean
+  isBind: boolean
 }
 
 @Module({ dynamic: true, store, name: 'app' })
@@ -36,6 +37,8 @@ class App extends VuexModule implements IAppState {
   public size = getSize() || 'medium'
 
   public introStatus = getIntroStatus(introKey) !== 'unneeded'
+
+  public isBind = true
 
   @Mutation
   private TOGGLE_SIDEBAR(withoutAnimation: boolean) {
@@ -83,6 +86,11 @@ class App extends VuexModule implements IAppState {
     setIntroStatus(introKey, status)
   }
 
+  @Mutation
+  private SET_APP_BIND_STATUS(status: boolean) {
+    this.isBind = status
+  }
+
   @Action
   public ToggleSideBar(withoutAnimation: boolean) {
     this.TOGGLE_SIDEBAR(withoutAnimation)
@@ -111,6 +119,11 @@ class App extends VuexModule implements IAppState {
   @Action
   public SetIntroStatus(status: IntroStatus) {
     this.SET_INTRO_STATUS(status)
+  }
+
+  @Action
+  public SetAppBindStatus(status: boolean) {
+    this.SET_APP_BIND_STATUS(status)
   }
 }
 
