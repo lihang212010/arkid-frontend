@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 
-export function dateParser(date: string, format: string = 'YYYY-MM-DD HH:mm:ss') {
+export function dateParser(date: string | number, format: string = 'YYYY-MM-DD HH:mm:ss') {
   return dayjs(date).format(format)
 }
 

@@ -10,7 +10,7 @@
           {{ title }}
         </div>
         <div class="subtitle">
-          {{ subtitle }}
+          {{ time }}
         </div>
       </div>
     </div>
@@ -34,6 +34,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { MainHeaderState } from '.'
+import { TenantModule } from '@/store/modules/tenant'
 
 @Component({
   name: 'MainHeader',
@@ -41,19 +42,24 @@ import { MainHeaderState } from '.'
 })
 export default class extends Vue {
   private img: string = require('@/assets/avatar.png')
-  private title = '欢迎使用一账通， 开启新的一天吧！'
-  private subtitle = '今日晴。阳历 2020年11月21日。'
+  private currentDate = new Date()
 
-  private data = [
-    {
-      label: '待办',
-      value: 10
-    },
-    {
-      label: '团队',
-      value: 5
-    }
-  ]
+  private data = []
+
+  get name() {
+    return TenantModule.currentTenant.name
+  }
+
+  get title() {
+    return `欢迎使用${this.name}， 开启新的一天吧！`
+  }
+
+  get time() {
+    const y = this.currentDate.getFullYear()
+    const m = this.currentDate.getMonth() + 1
+    const d = this.currentDate.getDate()
+    return `${y}-${m}-${d}`
+  }
 }
 </script>
 

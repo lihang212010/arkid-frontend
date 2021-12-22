@@ -75,7 +75,7 @@ export default class extends Mixins(BaseVue) {
   }
 
   handleClick() {
-    let { clickAction: action, url, is_bind: isBind, bindAction } = this.state
+    let { clickAction: action, url, is_bind: isBind, bindAction, uuid, name } = this.state
     if (action) {
       this.runAction(action)
     } else {
@@ -85,6 +85,7 @@ export default class extends Mixins(BaseVue) {
           showClose: true
         })
         AppModule.SetAppBindStatus(false)
+        if (uuid && name) AppModule.SetCurrentApp({ uuid, name })
         if (bindAction) this.runAction(bindAction)
       } else if (url) {
         if (this.token) url = url.replace(/\{token\}/g, this.token)

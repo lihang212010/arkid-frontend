@@ -23,6 +23,10 @@ export interface IAppState {
   size: string
   introStatus: boolean
   isBind: boolean
+  curApp: {
+    uuid: string
+    name: string
+  }
 }
 
 @Module({ dynamic: true, store, name: 'app' })
@@ -39,6 +43,11 @@ class App extends VuexModule implements IAppState {
   public introStatus = getIntroStatus(introKey) !== 'unneeded'
 
   public isBind = true
+
+  public curApp = {
+    uuid: '',
+    name: ''
+  }
 
   @Mutation
   private TOGGLE_SIDEBAR(withoutAnimation: boolean) {
@@ -91,6 +100,14 @@ class App extends VuexModule implements IAppState {
     this.isBind = status
   }
 
+  @Mutation
+  private SET_CURRENT_APP({ uuid, name }) {
+    this.curApp = {
+      uuid: uuid,
+      name: name,
+    }
+  }
+
   @Action
   public ToggleSideBar(withoutAnimation: boolean) {
     this.TOGGLE_SIDEBAR(withoutAnimation)
@@ -124,6 +141,11 @@ class App extends VuexModule implements IAppState {
   @Action
   public SetAppBindStatus(status: boolean) {
     this.SET_APP_BIND_STATUS(status)
+  }
+
+  @Action
+  public SetCurrentApp({ uuid, name }) {
+    this.SET_CURRENT_APP({ uuid, name })
   }
 }
 

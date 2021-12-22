@@ -27,7 +27,7 @@ const DASHBOARD_PAGE_FLOW = {
   'statistics': 'flows/page/dashboard/statistics',
   'tenant': 'flows/page/dashboard/tenant',
   'marketplace': 'flows/page/dashboard/marketplace',
-  'extension': 'flows/page/dashboard/extension'
+  'extension': 'flows/page/dashboard/extension',
 }
 
 const PAGE_CUSTOM_FLOW = {
@@ -43,6 +43,8 @@ const PAGE_CUSTOM_FLOW = {
   'user_token_manage': 'flows/custom/user/token/state',
   'contacts_switch': 'flows/custom/contactsConfig',
   'extension.update': 'flows/custom/extension/state',
+  'user_application_account_manage': 'flows/custom/user/account/state',
+  'user_application_account_manage.create': 'flows/custom/user/account/create'
 }
 
 export interface BasePageOptions {

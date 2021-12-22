@@ -1,6 +1,5 @@
 import { FunctionNode } from 'arkfbp/lib/functionNode'
 import { ConfigModule } from '@/store/modules/config'
-import { AppModule } from '@/store/modules/app'
 
 export class ControlEditFieldsNode extends FunctionNode {
 
@@ -16,10 +15,6 @@ export class ControlEditFieldsNode extends FunctionNode {
           item.state.disabled = true
         }
       }
-    }
-    if (!AppModule.isBind) {
-      state.$tabs.value = 'user_application_account_manage' // custom value
-      AppModule.SetAppBindStatus(true)
     }
   }
 
