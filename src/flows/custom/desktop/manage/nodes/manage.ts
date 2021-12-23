@@ -12,9 +12,9 @@ export class AppManageNode extends APINode {
     const { groups } = client
     const { name } = clientServer
     groups.splice(0, groups.length)
-    const items = {}
     if (application_group) {
       for (let i = 0, l = data.length; i < l; i++) {
+        const items = {}
         const { group_name, apps } = data[i]
         if (apps?.length === 0) continue
         apps.forEach((app, index) => {
@@ -37,6 +37,7 @@ export class AppManageNode extends APINode {
         })
       }
     } else {
+      const items = {}
       for (let i = 0, l = data.length; i < l; i++) {
         const item = data[i]
         items[`app${i}`] = {
