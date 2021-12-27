@@ -1,7 +1,6 @@
 import { APINode } from "@/arkfbp/nodes/apiNode"
 import { TenantModule } from '@/store/modules/tenant'
 import { getSlug, getUrlParamByName, isIPAddress } from '@/utils/url'
-import { ConfigModule } from '@/store/modules/config'
 
 export class TenantNode extends APINode {
   async run() {
@@ -31,7 +30,7 @@ export class TenantNode extends APINode {
           TenantModule.setTenantIsPlatform(res.uuid === uuid)
           TenantModule.changeCurrentTenant(res)
         } else {
-          TenantModule.changeCurrentTenant({ uuid })
+          TenantModule.changeCurrentTenant({ uuid, slug })
         }
       }
     } else {
@@ -39,10 +38,9 @@ export class TenantNode extends APINode {
       const data = await super.run()
       if (data?.uuid) {
         TenantModule.setTenantIsPlatform(data.uuid === uuid)
-        ConfigModule.setSlug(slug)
         TenantModule.changeCurrentTenant(data)
       } else {
-        TenantModule.changeCurrentTenant({ uuid })
+        TenantModule.changeCurrentTenant({ uuid, slug })
       }
     }
   }

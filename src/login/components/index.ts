@@ -8,14 +8,12 @@ import http from '../http'
 import { error } from '@/constants/error'
 
 @Component({
-  name: 'LoginComponent',
+  name: 'LoginContainer',
   components: {
     LoginButton
   }
 })
-export default class LoginComponent extends Vue {
-  @Prop({ required: true }) title?:string
-  @Prop({ required: true }) icon?:string
+export default class LoginContainer extends Vue {
   @Prop({ required: true }) config?:LoginPagesConfig
   @Prop({ required: true }) complexity?: TenantPasswordComplexity
 
@@ -27,7 +25,6 @@ export default class LoginComponent extends Vue {
   agreementVisible: boolean = false
   btn: ButtonConfig = {}
   isChangeDelay: boolean = false
-  defaultIcon = require('../../assets/arkid.png')
 
   get fullscreen(): boolean {
     return document.body.clientWidth < 600

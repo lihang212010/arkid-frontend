@@ -34,7 +34,7 @@ export default class extends Vue {
   }
 
   private toTarget() {
-    if (ConfigModule.slug !== '') {
+    if (TenantModule.isUseSlug && this.currentTenant.slug) {
       return {
         path: this.to
       }

@@ -38,7 +38,6 @@ interface IChildManagerPermission {
 
 export interface IConfigState {
   origin: string // ArkID平台的Location.origin
-  slug: string // 当前租户的短连接标识符
   desktop: IDesktopConfig // 桌面配置
   contacts: IContactsConfig // 通讯录配置
   user: IUserConfig // 用户配置
@@ -48,7 +47,6 @@ export interface IConfigState {
 @Module({ dynamic: true, store, name: 'config' })
 class Config extends VuexModule implements IConfigState {
   public origin: string = ''
-  public slug: string = ''
   public desktop: IDesktopConfig = {
     visible: true,
     resize: true
@@ -81,11 +79,6 @@ class Config extends VuexModule implements IConfigState {
   @Mutation
   setOrigin(origin: string = '') {
     this.origin = origin
-  }
-
-  @Mutation
-  setSlug(slug: string = '') {
-    this.slug = slug
   }
 
   @Mutation

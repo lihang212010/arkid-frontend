@@ -6,6 +6,7 @@ export interface ITenantState {
   tenantState: AdminComponentState
   currentTenant: ITenant
   isPlatformTenant: boolean
+  isUseSlug: boolean
 }
 
 export interface ITenant {
@@ -22,6 +23,7 @@ class Tenant extends VuexModule implements ITenantState {
   currentTenant: ITenant = {}
   tenantSwitch: boolean = true
   isPlatformTenant: boolean = true
+  isUseSlug: boolean = true
 
   @Mutation
   public changeState(payload: any) {
@@ -42,7 +44,21 @@ class Tenant extends VuexModule implements ITenantState {
   public setTenantIsPlatform(value: boolean) {
     this.isPlatformTenant = value;
   }
-  
+
+  @Mutation
+  public setTenantUUID(uuid: string) {
+    this.currentTenant.uuid = uuid
+  }
+
+  @Mutation
+  public setTenantSlug(slug: string) {
+    this.currentTenant.slug = slug
+  }
+
+  @Mutation
+  public setIsUseSlug(value: boolean) {
+    this.isUseSlug = value
+  }
 }
 
 export const TenantModule = getModule(Tenant)

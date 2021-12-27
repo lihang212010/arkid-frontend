@@ -1,16 +1,26 @@
 <template>
-  <login-component
-    v-if="isRenderLoginPage"
-    :title="tenant ? tenant.name : ''"
-    :icon="tenant ? tenant.icon : ''"
-    :config="config"
-    :complexity="tenant ? tenant.password_complexity : undefined"
-  />
+  <div class="login">
+    <LoginHeader
+      :icon="tenant.icon"
+      :name="tenant.name"
+    />
+    <LoginSlug v-if="isRequiredInputSlug" />
+    <LoginContainer
+      v-else-if="isRender"
+      :config="config"
+      :complexity="tenant.complexity"
+    />
+    <LoginFooter />
+  </div>
 </template>
+
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Watch } from 'vue-property-decorator'
-import LoginComponent from './components/LoginComponent.vue'
+import LoginHeader from './components/Header.vue'
+import LoginContainer from './components/Container.vue'
+import LoginSlug from './components/Slug.vue'
+import LoginFooter from './components/Footer.vue'
 import { LoginPagesConfig, LoginTenant, ButtonConfig } from './interface'
 import LoginStore from './store/login'
 import getBaseUrl from '@/utils/get-base-url'
@@ -19,11 +29,14 @@ import http from './http'
 @Component({
   name: 'Login',
   components: {
-    LoginComponent
+    LoginHeader,
+    LoginContainer,
+    LoginSlug,
+    LoginFooter
   }
 })
 export default class Login extends Vue {
-  private isRenderLoginPage = false
+  private isRender = false
   private config: LoginPagesConfig = {}
   private tenant: LoginTenant = {}
 
@@ -36,21 +49,21 @@ export default class Login extends Vue {
     this.getLoginPage()
   }
 
-  get tenantUUID(): string | null {
+  get uuid(): string | null {
     const tenant = this.$route.query.tenant
-    if (tenant) {
-      if (typeof tenant === 'string') {
-        return tenant
-      } else {
-        return tenant[0]
-      }
-    } else {
-      return null
-    }
+    return tenant ? (typeof tenant === 'string' ? tenant : tenant[0]) : null
   }
 
-  private async getLoginPage() {
-    // 登录之后进行当前登录地址的判断，如果当前登录地址有next参数，重定向到next中
+  get slug(): string | null {
+    const slug = this.$route.query.slug
+    return slug ? (typeof slug === 'string' ? slug : slug[0]) : null
+  }
+
+  get isRequiredInputSlug(): boolean {
+    return this.slug === 'null'
+  }
+
+  async getLoginPage() {
     const query = this.$route.query
     let next: any = query && query.next
     if (next) {
@@ -68,7 +81,9 @@ export default class Login extends Vue {
       }
     }
 
-    LoginStore.TenantUUID = this.tenantUUID
+    if (this.isRequiredInputSlug) return
+
+    LoginStore.TenantUUID = this.uuid
     let url = '/api/v1/loginpage/'
     if (LoginStore.TenantUUID) {
       url = '/api/v1/loginpage/?tenant=' + LoginStore.TenantUUID
@@ -89,7 +104,7 @@ export default class Login extends Vue {
     })
     this.config = config
     this.tenant = tenant
-    this.isRenderLoginPage = true
+    this.isRender = true
   }
 
   // third-party
@@ -110,5 +125,3 @@ export default class Login extends Vue {
   }
 }
 </script>
-<style lang="scss" scoped>
-</style>

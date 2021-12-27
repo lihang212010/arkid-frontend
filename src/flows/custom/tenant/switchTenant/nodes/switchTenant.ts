@@ -15,11 +15,11 @@ export class SwitchTenant extends FunctionNode {
     TenantModule.changeCurrentTenant(tenant)
     let url = ''
     if (slug && use_slug) {
-      ConfigModule.setSlug(slug)
+      TenantModule.setIsUseSlug(true)
       url = origin.replace(window.location.protocol + '//', window.location.protocol + '//' + slug + '.') + path + getBaseUrl() + '?token=' + getToken()
       window.location.replace(url)
     } else {
-      ConfigModule.setSlug()
+      TenantModule.setIsUseSlug(false)
       url = origin + path + getBaseUrl() + `?tenant=${TenantModule.currentTenant.uuid}&token=${getToken()}`
     }
     window.location.replace(url)
