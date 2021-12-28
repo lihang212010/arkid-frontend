@@ -1,5 +1,4 @@
 import { RouteConfig } from 'vue-router'
-import Layout from '@/layout/index.vue'
 import Admin from '@/admin/main/index.vue'
 import { UserModule, UserRole } from '@/store/modules/user'
 import OpenAPI, { ISpec, IOpenAPIRouter } from '@/config/openapi'
@@ -49,13 +48,13 @@ function generateRoute(route: IOpenAPIRouter): RouteConfig | undefined {
   const newRoute: RouteConfig = {
     path: '/' + path,
     name: path,
-    component: Layout,
+    component: resolve => require(['@/layout/index.vue'], resolve),
     meta: getRouteMeta(route),
     children: [
       {
         path: '',
         name: path,
-        component: Admin,
+        component: resolve => require(['@/admin/main/index.vue'], resolve),
         meta: getRouteMeta(route, true)
       }
     ]
@@ -77,7 +76,7 @@ function generateChildRoutes(routes: IOpenAPIRouter[], isAdmin: boolean = true):
       const childRoute = {
         path: path,
         name: path,
-        component: isAdmin ? Admin : undefined,
+        component: isAdmin ? resolve => require(['@/admin/main/index.vue'], resolve) : undefined,
         children: children ? generateChildRoutes(children, false) : undefined,
         meta: getRouteMeta(route)
       }

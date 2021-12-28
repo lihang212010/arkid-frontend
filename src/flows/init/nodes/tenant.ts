@@ -1,7 +1,6 @@
 import { APINode } from "@/arkfbp/nodes/apiNode"
 import { TenantModule } from '@/store/modules/tenant'
 import { getSlug, getUrlParamByName } from '@/utils/url'
-import getBaseUrl from '@/utils/get-base-url'
 import { processUUId } from '@/utils/common'
 import { ConfigModule } from '@/store/modules/config'
 
@@ -29,24 +28,13 @@ export class TenantNode extends APINode {
         TenantModule.changeCurrentTenant({ uuid: currentTenantUUID })
       }
     } else {
-      if (tenantSwitch === false) {
-        this.toPlatform()
-      } else {
-        this.url = `/api/v1/tenant/${slug}/slug/`
-        this.method = 'GET'
-        const res = await super.run()
-        if (res.uuid) {
-          ConfigModule.setSlug(slug)
-          TenantModule.changeCurrentTenant(res)
-        } else {
-          this.toPlatform()
-        }
+      this.url = `/api/v1/tenant/${slug}/slug/`
+      this.method = 'GET'
+      const res = await super.run()
+      if (res.uuid) {
+        ConfigModule.setSlug(slug)
+        TenantModule.changeCurrentTenant(res)
       }
     }
-  }
-
-  toPlatform() {
-    const origin = ConfigModule.origin
-    window.location.href = `${origin}/${getBaseUrl()}`
   }
 }

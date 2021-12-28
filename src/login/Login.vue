@@ -28,6 +28,7 @@ export default class Login extends Vue {
   private tenant: LoginTenant = {}
 
   async created() {
+    this.getToken()
     await this.getLoginPage()
   }
 
@@ -38,19 +39,26 @@ export default class Login extends Vue {
 
   get tenantUUID(): string | null {
     const tenant = this.$route.query.tenant
-    if (tenant) {
-      if (typeof tenant === 'string') {
-        return tenant
-      } else {
-        return tenant[0]
-      }
-    } else {
-      return null
+    return tenant ? typeof tenant === 'string' ? tenant : tenant[0] : null
+  }
+
+  get token(): string | null {
+    const token = this.$route.query.token
+    return token ? typeof token === 'string' ? token : token[0] : null
+  }
+
+  private getToken() {
+    if (this.token) {
+      this.$router.push({
+        path: '/',
+        query: this.$route.query
+      })
     }
   }
 
   private async getLoginPage() {
     // 登录之后进行当前登录地址的判断，如果当前登录地址有next参数，重定向到next中
+    if (this.token) return
     const query = this.$route.query
     let next: any = query && query.next
     if (next) {
