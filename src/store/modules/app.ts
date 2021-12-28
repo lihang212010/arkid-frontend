@@ -1,6 +1,5 @@
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
 import { getSidebarStatus, getSize, getIntroStatus, setSidebarStatus, setLanguage, setSize, setIntroStatus } from '@/utils/cookies'
-import { UserModule } from './user'
 import { getLocale } from '@/lang'
 import store from '@/store'
 
@@ -10,8 +9,6 @@ export enum DeviceType {
 }
 
 type IntroStatus = 'needed' | 'unneeded'
-
-const introKey = UserModule.username ? `${UserModule.username}_intro_status` : 'intro_status'
 
 export interface IAppState {
   device: DeviceType
@@ -40,7 +37,7 @@ class App extends VuexModule implements IAppState {
   public language = getLocale()
   public size = getSize() || 'medium'
 
-  public introStatus = getIntroStatus(introKey) !== 'unneeded'
+  public introStatus = getIntroStatus() !== 'unneeded'
 
   public isBind = true
 
@@ -92,7 +89,7 @@ class App extends VuexModule implements IAppState {
     if (status === 'unneeded') {
       this.introStatus = false
     }
-    setIntroStatus(introKey, status)
+    setIntroStatus(status)
   }
 
   @Mutation

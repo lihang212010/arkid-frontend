@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+import { UserModule } from '@/store/modules/user'
 
 // App
 const sidebarStatusKey = 'sidebar_status'
@@ -13,5 +14,6 @@ const sizeKey = 'size'
 export const getSize = () => Cookies.get(sizeKey)
 export const setSize = (size: string) => Cookies.set(sizeKey, size)
 
-export const getIntroStatus = (key: string) => window.localStorage.getItem(key)
-export const setIntroStatus = (key: string, status: string) => window.localStorage.setItem(key, status)
+const introKey = UserModule.username ? `${UserModule.username}_intro_status` : 'intro_status'
+export const getIntroStatus = () => window.localStorage.getItem(introKey)
+export const setIntroStatus = (status: string) => window.localStorage.setItem(introKey, status)

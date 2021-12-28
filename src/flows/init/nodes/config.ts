@@ -3,49 +3,29 @@ import { UserModule, UserRole } from '@/store/modules/user'
 import { TenantModule } from '@/store/modules/tenant'
 import { ConfigModule } from '@/store/modules/config'
 import OpenAPI from '@/config/openapi'
-import { processUUId } from '@/utils/common'
 
 export class ConfigNode extends APINode {
 
   async run() {
-    // 如若登录之后依旧没有租户信息，则去进行查询租户列表
-    // 如果租户列表只有一个租户，则自动将该租户设置为当前登录租户
-    if (!TenantModule.currentTenant.uuid) {
-      await this.setCurrentTenantInfo()
-    }
-
-    // 配置当前用户个人信息 昵称...
+    // 配置当前用户个人信息 昵称 ...
     await this.setCurrentUserInfo()
-
-    // 获取平台租户开关是否打开
-    await this.setTenantSwitch()
     
-    const tenantUUId = TenantModule.currentTenant.uuid
-    // 配置当前登录账号角色
-    await this.setCurrentUserRole(tenantUUId)
-    if (tenantUUId) {
+    const uuid = TenantModule.currentTenant.uuid
+    if (uuid) {
+      // 配置当前登录账号角色
+      await this.setCurrentUserRole(uuid)
       // 桌面配置信息
-      await this.setDesktopConfig(tenantUUId)
+      await this.setDesktopConfig(uuid)
       // 通讯录配置信息
-      await this.setContactsConfig(tenantUUId)
+      await this.setContactsConfig(uuid)
       // 用户配置信息
-      await this.setUserConfig(tenantUUId)
+      await this.setUserConfig(uuid)
       // 租户配置信息
-      await this.setTenantConfig(tenantUUId)
+      await this.setTenantConfig(uuid)
       // 租户密码复杂度
-      await this.setTenantPasswordComplexity(tenantUUId)
+      await this.setTenantPasswordComplexity(uuid)
       // 获取当前用户的权限
-      await this.getCurrentUserPermission(tenantUUId)
-    }
-  }
-
-  async setCurrentTenantInfo() {
-    this.url = '/api/v1/tenant/'
-    this.method = 'GET'
-    const outputs = await super.run()
-    const res = outputs?.results
-    if (res?.length === 1) {
-      TenantModule.changeCurrentTenant(res[0])
+      await this.getCurrentUserPermission(uuid)
     }
   }
 
@@ -53,47 +33,32 @@ export class ConfigNode extends APINode {
     this.url = '/api/v1/user/info/'
     this.method = 'GET'
     const outputs = await super.run()
-    if (outputs) {
-      UserModule.setUserInfo(outputs)
-    }
-  }
-
-  async setTenantSwitch() {
-    this.url = '/api/v1/tenant_switch/'
-    this.method = 'GET'
-    const outputs = await super.run()
-    const data = outputs.switch
-    TenantModule.setTenantSwitch(data)
+    UserModule.setUserInfo(outputs)
   }
 
   async setCurrentUserRole(tenantUUId: string | undefined) {
-    if (tenantUUId) {
-      this.url = '/api/v1/user/manage_tenants/'
-      this.method = 'GET'
-      const outputs = await super.run()
-      const isGlobalAdmin = outputs?.is_global_admin
-      const isPlatformUser = outputs?.is_platform_user
-      const manageTenants = outputs?.manage_tenants
-      if (isGlobalAdmin) {
-        UserModule.setUserRole(UserRole.Global)
-      } else if (manageTenants?.length) {
-        const uuid = TenantModule.currentTenant.uuid
-        const tenantManager = uuid && manageTenants.find((item) => {
-          item = processUUId(item)
-          return item === processUUId(uuid)
-        })
-        if (tenantManager) {
-          UserModule.setUserRole(UserRole.Tenant)
-        } else {
-          isPlatformUser ? UserModule.setUserRole(UserRole.Platform) : UserModule.setUserRole(UserRole.User)
-        }
-      } else if (isPlatformUser) {
-        UserModule.setUserRole(UserRole.Platform)
+    this.url = '/api/v1/user/manage_tenants/'
+    this.method = 'GET'
+    const outputs = await super.run()
+    const isGlobalAdmin = outputs?.is_global_admin
+    const isPlatformUser = outputs?.is_platform_user
+    const manageTenants = outputs?.manage_tenants
+    if (isGlobalAdmin) {
+      UserModule.setUserRole(UserRole.Global)
+    } else if (manageTenants?.length) {
+      const uuid = TenantModule.currentTenant.uuid
+      const tenantManager = uuid && manageTenants.find(u => {
+        return u.replace(/-/g, '') === uuid.replace(/-/g, '')
+      })
+      if (tenantManager) {
+        UserModule.setUserRole(UserRole.Tenant)
       } else {
-        UserModule.setUserRole(UserRole.User)
+        isPlatformUser ? UserModule.setUserRole(UserRole.Platform) : UserModule.setUserRole(UserRole.User)
       }
-    } else {
+    } else if (isPlatformUser) {
       UserModule.setUserRole(UserRole.Platform)
+    } else {
+      UserModule.setUserRole(UserRole.User)
     }
   }
 

@@ -3,7 +3,7 @@ import Router, { RouteConfig } from 'vue-router'
 import { TenantModule } from '@/store/modules/tenant'
 import { UserModule, UserRole } from '@/store/modules/user'
 import { getDynamicRoutes } from './dynamic'
-import { getToken, setToken } from '@/utils/auth'
+import { getToken } from '@/utils/auth'
 import { ConfigModule } from '@/store/modules/config'
 
 /* Solve the problem of router repeatedly jumping to the same route */
@@ -17,17 +17,17 @@ Vue.use(Router)
 export const menuRoutes: RouteConfig[] = [
   {
     path: '/login',
-    component: () => import('@/login/Login.vue'),
+    component: () => import(/* webpackChunkName: 'login' */'@/login/Login.vue'),
     meta: { hidden: true }
   },
   {
     path: '/third_part_callback',
-    component: () => import('@/login/ThirdPartCallback.vue'),
+    component: () => import(/* webpackChunkName: 'third_part_callback' */'@/login/ThirdPartCallback.vue'),
     meta: { hidden: true }
   },
   {
     path: '/tenant',
-    component: () => import('@/views/Tenant.vue'),
+    component: () => import(/* webpackChunkName: 'tenant' */'@/views/Tenant.vue'),
     meta: { hidden: true, page: 'tenant' }
   },
   ...getDynamicRoutes()
@@ -54,25 +54,27 @@ router.beforeEach((to, from, next) => {
   const role = UserModule.role
   const isVisibleDesktop = ConfigModule.desktop.visible
   const tenantSwitch = TenantModule.tenantSwitch
+  const isPlatformTenant = TenantModule.isPlatformTenant
   let nextUrl = ''
   const { query, path } = to
   if (isLogin) {
     if (query && query.next) {
       nextUrl = ''
     } else {
-      const t = isVisibleDesktop ? ( path === '/desktop' ? '' : '/desktop' ) : '/mine/profile'
-      const flag = role === UserRole.Platform && tenantSwitch === true 
+      const t = isVisibleDesktop ? ( path === '/desktop' ? '' : '/desktop' ) : '/mine'
       switch(path) {
         case '/third_part_callback':
         case '/desktop':
           nextUrl = t
           break
         case '/tenant':
-          nextUrl = flag || role !== UserRole.User ? '' : t
+          nextUrl = tenantSwitch === true ? (
+            role === UserRole.Platform || role !== UserRole.User ? '' : t
+          ) : t
           break
         case '/login':
         case '/':
-          nextUrl = flag ? '/tenant' : t
+          nextUrl = ((role === UserRole.Platform || isPlatformTenant) && tenantSwitch === true) ? '/tenant' : t
           break
         default:
           nextUrl = ''

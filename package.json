@@ -26,7 +26,6 @@
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.20",
     "normalize.css": "^8.0.1",
-    "path-to-regexp": "^6.2.0",
     "screenfull": "^5.0.2",
     "sortablejs": "^1.10.2",
     "tinymce": "^5.4.2",

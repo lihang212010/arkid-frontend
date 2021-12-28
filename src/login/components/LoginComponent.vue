@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     class="login"
-    :visible="true"
+    :visible="visible"
     :show-close="false"
     center
     width="450px"

@@ -28,6 +28,10 @@ export default class LoginComponent extends Vue {
   btn: ButtonConfig = {}
   isChangeDelay: boolean = false
   defaultIcon = require('../../assets/arkid.png')
+  
+  get visible(): boolean {
+    return LoginStore.token === null
+  }
 
   get fullscreen(): boolean {
     return document.body.clientWidth < 600

@@ -29,27 +29,6 @@
         >
           <notice-center class="right-menu-item hover-effect" />
         </el-tooltip>
-        <el-tooltip
-          :content="$t('navbar.screenfull')"
-          effect="dark"
-          placement="bottom"
-        >
-          <screenfull class="right-menu-item hover-effect" />
-        </el-tooltip>
-        <el-tooltip
-          :content="$t('navbar.size')"
-          effect="dark"
-          placement="bottom"
-        >
-          <size-select class="right-menu-item hover-effect" />
-        </el-tooltip>
-        <el-tooltip
-          :content="$t('navbar.lang')"
-          effect="dark"
-          placement="bottom"
-        >
-          <lang-select class="right-menu-item hover-effect" />
-        </el-tooltip>
       </template>
       <el-dropdown
         class="avatar-container right-menu-item hover-effect"
