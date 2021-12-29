@@ -17,17 +17,17 @@ Vue.use(Router)
 export const menuRoutes: RouteConfig[] = [
   {
     path: '/login',
-    component: () => import(/* webpackChunkName: 'login' */'@/login/Login.vue'),
+    component: () => import('@/login/index.vue'),
     meta: { hidden: true }
   },
   {
     path: '/third_part_callback',
-    component: () => import(/* webpackChunkName: 'third_part_callback' */'@/login/ThirdPartCallback.vue'),
+    component: () => import('@/login/ThirdPartCallback.vue'),
     meta: { hidden: true }
   },
   {
     path: '/tenant',
-    component: () => import(/* webpackChunkName: 'tenant' */'@/views/Tenant.vue'),
+    component: () => import('@/views/Tenant.vue'),
     meta: { hidden: true, page: 'tenant' }
   },
   ...getDynamicRoutes()

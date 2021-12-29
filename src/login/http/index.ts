@@ -1,7 +1,7 @@
 import axios from 'axios'
 import LoginStore from '../store/login'
 import { Message } from 'element-ui'
-import { error } from '@/constants/error'
+import { errors } from '@/constants/error'
 
 const toLogin = () => {
   LoginStore.removeToken()
@@ -47,7 +47,7 @@ http.interceptors.response.use(
     const data = response && response.data
     if (data) {
       Message({
-        message: error[data.error] || data.message || 'error',
+        message: errors[data.error] || data.message || 'error',
         type: 'error',
         showClose: true
       })

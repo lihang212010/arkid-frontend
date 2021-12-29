@@ -37,4 +37,9 @@ export default class LoginStore {
 
   public static CodeFileName: string = ''
 
+  public static RigisterPasswordComplexity = {
+    regular: '',
+    title: ''
+  }
+
 }

@@ -1,4 +1,4 @@
-export const error = {
+export const errors = {
   '10001': '用户名密码不匹配',
   '10002': '验证码错误',
   '10003': '租户没有权限',

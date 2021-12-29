@@ -1,6 +1,6 @@
 import { APINode } from '@/arkfbp/nodes/apiNode'
 import { FlowModule } from '@/store/modules/flow'
-import { error } from '@/constants/error'
+import { errors } from '@/constants/error'
 
 export class Import extends APINode {
   async run() {
@@ -19,7 +19,7 @@ export class Import extends APINode {
     if (errorStatus && errorStatus !== '0') {
       FlowModule.stopRunFlow()
       com.$message({
-        message: error[errorStatus],
+        message: errors[errorStatus],
         type: 'error',
         showClose: true
       })
