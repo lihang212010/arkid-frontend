@@ -64,6 +64,8 @@ export default class Login extends Vue {
   }
 
   async getLoginPage() {
+    if (this.isRequiredInputSlug) return
+
     const query = this.$route.query
     let next: any = query && query.next
     if (next) {
@@ -80,8 +82,6 @@ export default class Login extends Vue {
         window.location.replace(next + `${prefix}token=` + LoginStore.token)
       }
     }
-
-    if (this.isRequiredInputSlug) return
 
     LoginStore.TenantUUID = this.uuid
     let url = '/api/v1/loginpage/'
