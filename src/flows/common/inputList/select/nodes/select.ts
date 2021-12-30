@@ -31,8 +31,10 @@ export class SelectNode extends FunctionNode {
         data.push(item.value)
       }
     } else {
-      items[0] = item
-      data[0] = item.value
+      items.splice(0, 1)
+      data.splice(0, 1)
+      items.push(item)
+      data.push(item.value)
     }
   }
 }
