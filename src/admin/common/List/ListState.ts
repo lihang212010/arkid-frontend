@@ -15,4 +15,6 @@ export default interface ListState extends BaseState {
   buttons?: ButtonState[] // 全局按钮操作
   detail?: any // 详情弹框
   clearable?: boolean // 是否可以删除
+  clearAction?: string // clear action
+  data?: string[] // uuids
 }

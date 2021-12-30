@@ -120,7 +120,7 @@ export default class LoginForms extends Vue {
 
   private index = 0;
 
-  private model = {}
+  private model: any = {}
   private rules = {}
 
   private btn: ButtonConfig = {}

@@ -89,8 +89,10 @@ export default class extends Mixins(BaseVue) {
   }
 
   handleClear(index: number) {
-    const items = this.state.items
+    const { items, data, clearAction } = this.state
     items!.splice(index, 1)
+    data!.splice(index, 1)
+    if (clearAction) this.runAction(clearAction)
   }
 
   created() {

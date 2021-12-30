@@ -8,29 +8,7 @@ export class InitInputList extends FunctionNode {
     const pageState = com.getAnyPageState(page)
     const type = pageState.tree ? 'TreePage' : 'TablePage'
 
-    // add action
-    Object.assign(pageState.actions, {
-      confirm: [
-        {
-          name: 'flows/common/inputList/confirm',
-          path: com.path,
-          request: {
-            multiple,
-            field
-          }
-        },
-        `${parent}.close${page}`
-      ],
-      select: [
-        {
-          name: 'flows/common/inputList/select',
-          request: {
-            multiple,
-            field
-          }
-        }
-      ]
-    })
+    // list data
     if (!pageState.list) {
       pageState.list = {
         title: '已选数据列表',
@@ -45,14 +23,46 @@ export class InitInputList extends FunctionNode {
         items: [],
         isActive: true,
         disabled: true,
-        clearable: true
+        clearable: true,
+        data: [],
+        clearAction: 'fetch'
       }
     }
-    const items = pageState.list.items
+
+    // add action
+    const actions = pageState.actions
+    const fetchAction = actions.fetch[0]
+    // filter data
+    if (fetchAction) {
+      fetchAction.request.excludes = 'list.data'
+    }
+    actions.confirm = [
+      {
+        name: 'flows/common/inputList/confirm',
+        path: com.path,
+        request: {
+          multiple,
+          field
+        }
+      },
+      `${parent}.close${page}`
+    ]
+    actions.select = [
+      {
+        name: 'flows/common/inputList/select',
+        request: {
+          multiple,
+          field
+        }
+      },
+      'fetch'
+    ]
+    const { items, data } = pageState.list
     // set list inital data
     items.length = 0
     for (let item of options) {
       items.push(item)
+      data.push(item.value)
     }
     // set table or tree default data and execute action
     // can process multiple => extend content ...

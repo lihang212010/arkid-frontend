@@ -1,33 +1,38 @@
 import { FunctionNode } from 'arkfbp/lib/functionNode'
-import { ListItemState } from '@/admin/common/List/ListState'
 import { processUUId } from '@/utils/common'
 
 export class SelectNode extends FunctionNode {
   async run() {
     const { client: state, params } = this.inputs
     const { multiple, field } = params
-    const listData: ListItemState[] = state.list.items
-    const data = state.table ? state.table.row : state.tree ? state.tree.node : null
-    if (!data || !data[field]) return
+    const { items, data } = state.list
+    const dep = state.table ? state.table.row : state.tree ? state.tree.node : null
+    if (!dep || !dep[field]) return
     const item = {
-      label: data.label || data.name || data.username || '',
-      value: data[field]
+      label: dep.label || dep.name || dep.username || '',
+      value: dep[field]
     }
-    if (listData.length === 0) {
-      listData.push(item)
+    if (items.length === 0) {
+      items.push(item)
+      data.push(item.value)
     } else if (multiple) {
       let isExistThisValue = false
-      for (let i = 0, len = listData.length; i < len; i++) {
-        const item = listData[i]
-        if (processUUId(item.value) === processUUId(data[field])) {
-          listData.splice(i, 1)
+      for (let i = 0, len = items.length; i < len; i++) {
+        const item = items[i]
+        if (processUUId(item.value) === processUUId(dep[field])) {
+          items.splice(i, 1)
+          data.splice(i, 1)
           isExistThisValue = true
           break
         }
       }
-      if (!isExistThisValue) listData.push(item)
+      if (!isExistThisValue) {
+        items.push(item)
+        data.push(item.value)
+      }
     } else {
-      listData[0] = item
+      items[0] = item
+      data[0] = item.value
     }
   }
 }
