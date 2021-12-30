@@ -2,6 +2,7 @@ import { runWorkflowByClass } from 'arkfbp/lib/flow'
 import { stateFilter } from '@/utils/flow'
 import { FlowModule } from '@/store/modules/flow'
 import { isEmptyObject } from '@/utils/common'
+import { isArray } from 'lodash'
 
 export interface IFlow {
   name: string
@@ -66,7 +67,7 @@ async function runFlow (com: any, state: any, flow: IFlow, page: string, previou
   // 对 request 请求参数进行解析处理
   if (args.request && !isEmptyObject(args.request)) {
     const mapping = stateMappingProxy(state, args.request)
-    inputs.params = parseStateMapping(state, mapping)
+    inputs.params = parseStateMapping(state, mapping, method)
   }
   return await runFlowByFile(filePath, inputs)
 }
@@ -107,7 +108,7 @@ function stateMappingProxy(state: any, mappings: any) {
 // 参数说明
 // state: current page state
 // mapping: request or response config
-function parseStateMapping(state: any, mapping: any) {
+function parseStateMapping(state: any, mapping: any, method: string = '') {
   let params = {}
   Object.keys(mapping).forEach(key => {
     let tempState
@@ -116,6 +117,11 @@ function parseStateMapping(state: any, mapping: any) {
       tempState = getStateByStringConfig(state, item)
       if (tempState !== undefined && tempState !== null && tempState !== '') {
         params[key] = tempState
+        if (isArray(tempState) && method === 'get') {
+          params[key] = '['
+          tempState.forEach(t => params[key] += `'${t}',`)
+          params[key] += ']'
+        }
       }
     } else {
       params[key] = item

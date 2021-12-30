@@ -59,7 +59,8 @@ export class InitInputList extends FunctionNode {
     ]
     const { items, data } = pageState.list
     // set list inital data
-    items.length = 0
+    items.splice(0, items.length)
+    data.splice(0, data.length)
     for (let item of options) {
       items.push(item)
       data.push(item.value)
