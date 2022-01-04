@@ -13,7 +13,7 @@ export class ConfigNode extends APINode {
     const uuid = TenantModule.currentTenant.uuid
     if (uuid) {
       // 配置当前登录账号角色
-      await this.setCurrentUserRole(uuid)
+      await this.setCurrentUserRole()
       // 桌面配置信息
       await this.setDesktopConfig(uuid)
       // 通讯录配置信息
@@ -33,10 +33,13 @@ export class ConfigNode extends APINode {
     this.url = '/api/v1/user/info/'
     this.method = 'GET'
     const outputs = await super.run()
-    UserModule.setUserInfo(outputs)
+    UserModule.setUserInfo({
+      ...outputs,
+      realname: outputs.real_name
+    })
   }
 
-  async setCurrentUserRole(tenantUUId: string | undefined) {
+  async setCurrentUserRole() {
     this.url = '/api/v1/user/manage_tenants/'
     this.method = 'GET'
     const outputs = await super.run()

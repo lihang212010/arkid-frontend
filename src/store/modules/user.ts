@@ -3,6 +3,7 @@ import store from '@/store'
 
 export interface IUserState {
   uuid: string
+  realname: string
   username: string
   avatar?: string
   mobile?: string
@@ -30,6 +31,7 @@ export enum UserRole {
 @Module({ dynamic: true, store, name: 'user' })
 class User extends VuexModule implements IUserState {
   public uuid = ''
+  public realname = ''
   public username = ''
   public avatar = ''
   public mobile = ''
@@ -50,6 +52,7 @@ class User extends VuexModule implements IUserState {
   @Mutation
   setUserInfo(user: IUserState) {
     this.uuid = user.uuid
+    this.realname = user.realname
     this.username = user.username
     this.avatar = user.avatar || ''
     this.mobile = user.mobile || ''

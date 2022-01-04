@@ -100,7 +100,7 @@ export default class extends Vue {
   }
 
   get username() {
-    return UserModule.nickname || UserModule.username
+    return UserModule.realname || UserModule.username
   }
 
   private toggleSideBar() {
