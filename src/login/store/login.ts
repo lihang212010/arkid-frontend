@@ -1,3 +1,5 @@
+import { LoginPagesConfig, LoginTenant } from '../interface'
+
 export default class LoginStore {
   public static readonly TOKEN = 'token'
 
@@ -37,4 +39,9 @@ export default class LoginStore {
 
   public static CodeFileName: string = ''
 
+  public static Config: LoginPagesConfig = {}
+
+  public static ArkidExtendUrl: string = ''
+
+  public static Tenant: LoginTenant = {}
 }

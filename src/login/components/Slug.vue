@@ -39,6 +39,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
+import { getLoginPage } from '../login'
+import LoginStore from '../store/login'
 
 @Component({
   name: 'LoginSlug',
@@ -54,22 +56,27 @@ export default class LoginSlug extends Vue {
   }
 
   submitForm(formName: string) {
-    (this.$refs[formName] as any).validate((valid) => {
-      if (valid) this.toTarget()
+    (this.$refs[formName] as any).validate(async(valid) => {
+      if (valid) await this.toTarget()
     })
   }
 
-  toTarget() {
-    const query = this.$route.query
-    const { protocol, origin, pathname } = window.location
-    let url = origin.replace(`${protocol}//`, `${protocol}//${this.form.slug}.`) + pathname
-    const keys = Object.keys(query)
-    for (const key of keys) {
-      if (key === 'slug' || key === 'tenant') continue
-      url = url + `&${key}=${query[key]}`
+  async toTarget() {
+    await getLoginPage(this.$route)
+    if (LoginStore.ArkidExtendUrl) {
+      window.location.replace(LoginStore.ArkidExtendUrl)
+    } else {
+      const query = this.$route.query
+      const { protocol, origin, pathname } = window.location
+      let url = origin.replace(`${protocol}//`, `${protocol}//${this.form.slug}.`) + pathname
+      const keys = Object.keys(query)
+      for (const key of keys) {
+        if (key === 'slug' || key === 'tenant') continue
+        url = url + `&${key}=${query[key]}`
+      }
+      url = url.replace('&', '?')
+      window.location.replace(url)
     }
-    url = url.replace('&', '?')
-    window.location.replace(url)
   }
 }
 </script>

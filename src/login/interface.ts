@@ -6,10 +6,12 @@ export interface LoginPageConfig {
   name?: string
   forms?:Array<FormConfig>
   bottoms?:Array<ButtonConfig>
-  extend?:{
-    title?: string
-    buttons?: Array<ButtonConfig>
-  }
+  extend?:LoginPageExtend
+}
+
+export interface LoginPageExtend {
+  title?: string
+  buttons?: Array<ButtonConfig>
 }
 
 export interface FormConfig {
